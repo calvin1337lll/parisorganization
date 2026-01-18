@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>دخول - Paris Online</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+    <div class="login-box">
+        <h2 id="authTitle">دخول النظام</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="اسم المستخدم (English Only)">
+            <input type="password" id="pass" placeholder="كلمة السر (8 خانات فأكثر)">
+        </div>
+        <button onclick="handleAuth()" class="btn-auth" id="authBtn">دخول</button>
+        <div class="toggle-link">
+            <a href="javascript:void(0)" onclick="toggleAuth()" id="toggleBtn">ليس لديك حساب؟ إنشاء حساب</a>
+        </div>
+    </div>
+    <script type="module" src="script.js"></script>
+    <script>
+        // دالة بسيطة للتبديل بين الدخول والتسجيل واجهياً
+        function toggleAuth() {
+            const title = document.getElementById('authTitle');
+            const btn = document.getElementById('authBtn');
+            const toggle = document.getElementById('toggleBtn');
+            if (title.innerText.includes("دخول")) {
+                title.innerText = "إنشاء حساب جديد";
+                btn.innerText = "تسجيل الحساب";
+                toggle.innerText = "لديك حساب؟ تسجيل دخول";
+            } else {
+                title.innerText = "دخول النظام";
+                btn.innerText = "دخول";
+                toggle.innerText = "ليس لديك حساب؟ إنشاء حساب";
+            }
+        }
+    </script>
+</body>
+</html>
