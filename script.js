@@ -1,73 +1,80 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// --- ضع بيانات Firebase الخاصة بك هنا ---
+// إعدادات Firebase الخاصة بك
 const firebaseConfig = {
-    apiKey: "ضع_هنا_API_KEY",
-    databaseURL: "ضع_هنا_URL",
-    projectId: "ضع_هنا_ID",
+    apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4",
+    authDomain: "webparis-ef921.firebaseapp.com",
+    databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com",
+    projectId: "webparis-ef921",
+    storageBucket: "webparis-ef921.firebasestorage.app",
+    messagingSenderId: "393700256445",
+    appId: "1:393700256445:web:016d82e03e2c00a24425d4",
+    measurementId: "G-TLSZHV5Y5Q"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let isLoginMode = true;
-
+// ربط الأزرار بعد تحميل الصفحة
 document.addEventListener('DOMContentLoaded', () => {
-    const mainBtn = document.getElementById('mainAuthBtn');
+    const authBtn = document.getElementById('mainAuthBtn');
     const switchBtn = document.getElementById('switchBtn');
     const title = document.getElementById('authTitle');
-    const extraFields = document.getElementById('registerExtra');
 
-    // دالة التبديل بين الدخول والتسجيل
-    if (switchBtn) {
-        switchBtn.onclick = () => {
-            isLoginMode = !isLoginMode;
-            title.innerText = isLoginMode ? "دخول النظام" : "إنشاء حساب جديد";
-            mainBtn.innerText = isLoginMode ? "دخول" : "تسجيل الحساب";
-            switchBtn.innerText = isLoginMode ? "ليس لديك حساب؟ إنشاء حساب جديد" : "لديك حساب بالفعل؟ تسجيل دخول";
-            extraFields.style.display = isLoginMode ? "none" : "block";
-        };
-    }
-
-    // دالة تنفيذ العملية (دخول أو تسجيل)
-    if (mainBtn) {
-        mainBtn.onclick = async () => {
+    // دالة الدخول والتسجيل
+    if (authBtn) {
+        authBtn.onclick = async () => {
             const user = document.getElementById('username').value.trim().toLowerCase();
             const pass = document.getElementById('pass').value;
-            const confirmPass = document.getElementById('confirmPass').value;
+            const isLogin = title.innerText.includes("دخول");
 
-            if (user.length < 3 || pass.length < 8) {
-                return alert("اليوزر 3+ حروف والباسورد 8+ خانات");
-            }
+            if (!user || !pass) return alert("يرجى كتابة اليوزر والباسورد");
 
             const userRef = ref(db, 'users/' + user);
-
             try {
                 const snapshot = await get(userRef);
-
-                if (isLoginMode) {
-                    // تسجيل دخول
-                    if (snapshot.exists()) {
-                        const data = snapshot.val();
-                        if (data.pass === pass) {
-                            if (data.banned) return alert("حسابك محظور!");
-                            sessionStorage.setItem('paris_session', JSON.stringify(data));
-                            window.location.href = 'index.html';
-                        } else alert("كلمة السر خاطئة!");
-                    } else alert("اليوزر غير موجود!");
+                if (isLogin) {
+                    if (snapshot.exists() && snapshot.val().pass === pass) {
+                        const userData = snapshot.val();
+                        if (userData.banned) return alert("أنت محظور!");
+                        sessionStorage.setItem('paris_session', JSON.stringify(userData));
+                        window.location.replace("index.html"); // انتقال آمن
+                    } else alert("خطأ في البيانات!");
                 } else {
-                    // إنشاء حساب
-                    if (pass !== confirmPass) return alert("كلمات السر غير متطابقة!");
-                    if (snapshot.exists()) return alert("اليوزر مستخدم بالفعل!");
-
+                    if (snapshot.exists()) return alert("اليوزر مستخدم!");
                     await set(userRef, { user, pass, rank: "USER", banned: false });
-                    alert("تم إنشاء الحساب! سجل دخولك الآن.");
+                    alert("تم التسجيل! سجل دخولك الآن.");
                     location.reload();
                 }
-            } catch (e) {
-                alert("خطأ في الاتصال: " + e.message);
-            }
+            } catch (e) { alert("فشل الاتصال: " + e.message); }
         };
     }
+
+    // التبديل بين الواجهات
+    if (switchBtn) {
+        switchBtn.onclick = () => {
+            const isLog = title.innerText.includes("دخول");
+            title.innerText = isLog ? "إنشاء حساب جديد" : "دخول النظام";
+            authBtn.innerText = isLog ? "تسجيل الحساب" : "دخول";
+            switchBtn.innerText = isLog ? "لديك حساب؟ دخول" : "ليس لديك حساب؟ إنشاء حساب";
+        };
+    }
+
+    // تحميل بيانات الصفحة الرئيسية
+    loadDashboard();
 });
+
+function loadDashboard() {
+    const session = sessionStorage.getItem('paris_session');
+    if (!session || !document.getElementById('uName')) return;
+    const user = JSON.parse(session);
+    document.getElementById('uName').innerText = user.user;
+    document.getElementById('uRank').innerText = user.rank;
+    document.getElementById('uInit').innerText = user.user[0].toUpperCase();
+    if (user.rank === 'OWNER') document.getElementById('adminBtn').style.display = 'block';
+}
+
+// الدوال العامة للموقع (نشر، حظر، خروج)
+window.logout = () => { sessionStorage.clear(); window.location.replace("login.html"); };
+window.closeModal = () => document.getElementById('mainModal').style.display = 'none';
