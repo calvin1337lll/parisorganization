@@ -1,3 +1,7 @@
+// كود الحماية - يوضع في أعلى ملف script.js
+if (!sessionStorage.getItem('paris_session') && !window.location.pathname.includes('login.html')) {
+    window.location.href = 'login.html';
+}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -112,4 +116,5 @@ window.openAdminPanel = function() {
 window.updateUser = (user, rank) => update(ref(db, 'users/' + user), { rank });
 window.banUser = (user, status) => update(ref(db, 'users/' + user), { banned: status });
 window.logout = () => { sessionStorage.clear(); window.location.href = 'login.html'; };
+
 window.closeModal = () => document.getElementById('mainModal').style.display = 'none';
