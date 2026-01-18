@@ -1,118 +1,73 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// --- إعدادات Firebase ---
+// --- ضع بيانات Firebase الخاصة بك هنا ---
 const firebaseConfig = {
-    apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4",
-    databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com",
-    projectId: "webparis-ef921",
+    apiKey: "ضع_هنا_API_KEY",
+    databaseURL: "ضع_هنا_URL",
+    projectId: "ضع_هنا_ID",
 };
 
-// تشغيل Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ربط العناصر برمجياً عند تحميل الصفحة
+let isLoginMode = true;
+
 document.addEventListener('DOMContentLoaded', () => {
-    const authBtn = document.getElementById('authBtnAction');
-    const switchBtn = document.getElementById('switchModeBtn');
+    const mainBtn = document.getElementById('mainAuthBtn');
+    const switchBtn = document.getElementById('switchBtn');
     const title = document.getElementById('authTitle');
+    const extraFields = document.getElementById('registerExtra');
 
-    if (authBtn) {
-        authBtn.onclick = handleAuth;
-    }
-
+    // دالة التبديل بين الدخول والتسجيل
     if (switchBtn) {
         switchBtn.onclick = () => {
-            if (title.innerText.includes("دخول")) {
-                title.innerText = "إنشاء حساب جديد";
-                authBtn.innerText = "تسجيل الحساب";
-                switchBtn.innerText = "لديك حساب؟ تسجيل دخول";
-            } else {
-                title.innerText = "دخول النظام";
-                authBtn.innerText = "دخول";
-                switchBtn.innerText = "ليس لديك حساب؟ إنشاء حساب";
+            isLoginMode = !isLoginMode;
+            title.innerText = isLoginMode ? "دخول النظام" : "إنشاء حساب جديد";
+            mainBtn.innerText = isLoginMode ? "دخول" : "تسجيل الحساب";
+            switchBtn.innerText = isLoginMode ? "ليس لديك حساب؟ إنشاء حساب جديد" : "لديك حساب بالفعل؟ تسجيل دخول";
+            extraFields.style.display = isLoginMode ? "none" : "block";
+        };
+    }
+
+    // دالة تنفيذ العملية (دخول أو تسجيل)
+    if (mainBtn) {
+        mainBtn.onclick = async () => {
+            const user = document.getElementById('username').value.trim().toLowerCase();
+            const pass = document.getElementById('pass').value;
+            const confirmPass = document.getElementById('confirmPass').value;
+
+            if (user.length < 3 || pass.length < 8) {
+                return alert("اليوزر 3+ حروف والباسورد 8+ خانات");
+            }
+
+            const userRef = ref(db, 'users/' + user);
+
+            try {
+                const snapshot = await get(userRef);
+
+                if (isLoginMode) {
+                    // تسجيل دخول
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        if (data.pass === pass) {
+                            if (data.banned) return alert("حسابك محظور!");
+                            sessionStorage.setItem('paris_session', JSON.stringify(data));
+                            window.location.href = 'index.html';
+                        } else alert("كلمة السر خاطئة!");
+                    } else alert("اليوزر غير موجود!");
+                } else {
+                    // إنشاء حساب
+                    if (pass !== confirmPass) return alert("كلمات السر غير متطابقة!");
+                    if (snapshot.exists()) return alert("اليوزر مستخدم بالفعل!");
+
+                    await set(userRef, { user, pass, rank: "USER", banned: false });
+                    alert("تم إنشاء الحساب! سجل دخولك الآن.");
+                    location.reload();
+                }
+            } catch (e) {
+                alert("خطأ في الاتصال: " + e.message);
             }
         };
     }
 });
-
-// دالة الدخول والتسجيل الرئيسية
-async function handleAuth() {
-    const user = document.getElementById('username').value.trim().toLowerCase();
-    const pass = document.getElementById('pass').value;
-    const isLoginMode = document.getElementById('authBtnAction').innerText === "دخول";
-    const status = document.getElementById('statusMessage');
-
-    // شروط التحقق
-    if (user.length < 3) return alert("اسم المستخدم قصير جداً!");
-    if (pass.length < 8) return alert("كلمة السر يجب أن تكون 8 خانات أو أكثر!");
-
-    status.innerText = "جاري الاتصال بقاعدة البيانات...";
-    const userRef = ref(db, 'users/' + user);
-
-    try {
-        const snapshot = await get(userRef);
-
-        if (isLoginMode) {
-            // منطق تسجيل الدخول
-            if (snapshot.exists()) {
-                const userData = snapshot.val();
-                if (userData.pass === pass) {
-                    if (userData.banned) {
-                        status.innerText = "";
-                        return alert("عذراً، هذا الحساب محظور!");
-                    }
-                    // نجاح الدخول
-                    sessionStorage.setItem('paris_session', JSON.stringify(userData));
-                    window.location.href = 'index.html';
-                } else {
-                    alert("كلمة السر التي أدخلتها غير صحيحة!");
-                }
-            } else {
-                alert("اسم المستخدم هذا غير مسجل لدينا!");
-            }
-        } else {
-            // منطق إنشاء حساب جديد
-            if (snapshot.exists()) {
-                alert("اسم المستخدم مأخوذ بالفعل، اختر اسماً آخر.");
-            } else {
-                await set(userRef, {
-                    user: user,
-                    pass: pass,
-                    rank: "USER",
-                    banned: false
-                });
-                alert("تم إنشاء حسابك بنجاح! يمكنك الآن تسجيل الدخول.");
-                location.reload(); // إعادة التحميل للتبديل لوضع الدخول
-            }
-        }
-    } catch (error) {
-        console.error(error);
-        alert("حدث خطأ في الاتصال: " + error.message);
-    } finally {
-        status.innerText = "";
-    }
-}
-
-// --- نظام تعديل الملف الشخصي (داخل index.html) ---
-window.updateProfile = async function() {
-    const currentUser = JSON.parse(sessionStorage.getItem('paris_session'));
-    const newPass = document.getElementById('newPass').value;
-    const oldPass = document.getElementById('oldPass').value;
-    const confirmPass = document.getElementById('confirmPass').value;
-
-    if (oldPass !== currentUser.pass) return alert("كلمة السر القديمة غير صحيحة!");
-    if (newPass.length < 8) return alert("كلمة السر الجديدة يجب أن تكون 8 خانات!");
-    if (newPass !== confirmPass) return alert("كلمات السر الجديدة غير متطابقة!");
-
-    try {
-        await update(ref(db, 'users/' + currentUser.user), { pass: newPass });
-        currentUser.pass = newPass;
-        sessionStorage.setItem('paris_session', JSON.stringify(currentUser));
-        alert("تم تحديث كلمة السر بنجاح!");
-        location.reload();
-    } catch (e) {
-        alert("فشل التحديث!");
-    }
-}
