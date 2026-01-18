@@ -2,9 +2,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "ضع_هنا_API_KEY",
-    databaseURL: "ضع_هنا_URL",
-    projectId: "ضع_هنا_ID",
+    apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4",
+    databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com",
+    projectId: "webparis-ef921",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -27,3 +27,4 @@ window.logout = () => {
 };
 
 // وبقية الدوال (handleAuth, openModule) كما هي في الكود السابق...
+
