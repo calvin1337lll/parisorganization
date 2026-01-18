@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دخول - Paris Online</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
@@ -17,17 +18,17 @@
         <div class="toggle-link">
             <a href="javascript:void(0)" onclick="toggleAuth()" id="toggleBtn">ليس لديك حساب؟ إنشاء حساب</a>
         </div>
+        <p id="errorMsg" style="color: red; font-size: 13px; margin-top: 10px;"></p>
     </div>
     <script type="module" src="script.js"></script>
     <script>
-        // دالة بسيطة للتبديل بين الدخول والتسجيل واجهياً
         function toggleAuth() {
             const title = document.getElementById('authTitle');
             const btn = document.getElementById('authBtn');
             const toggle = document.getElementById('toggleBtn');
             if (title.innerText.includes("دخول")) {
                 title.innerText = "إنشاء حساب جديد";
-                btn.innerText = "تسجيل الحساب";
+                btn.innerText = "تسجيل";
                 toggle.innerText = "لديك حساب؟ تسجيل دخول";
             } else {
                 title.innerText = "دخول النظام";
