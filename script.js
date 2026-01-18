@@ -108,3 +108,49 @@ window.openModule = (id) => {
 };
 
 
+// نظام تسجيل الدخول والجلسة
+const userData = JSON.parse(sessionStorage.getItem('paris_session'));
+
+if (!userData) {
+    window.location.href = 'login.html';
+} else {
+    document.getElementById('uName').innerText = userData.user;
+    document.getElementById('uRank').innerText = userData.rank === 'OWNER' ? 'المالك المباشر' : 'عضو المنظمة';
+    document.getElementById('avatarChar').innerText = userData.user.charAt(0).toUpperCase();
+    
+    // إظهار أزرار الإدارة فقط للمالك
+    if(userData.rank === 'OWNER') {
+        const adminBtn = document.getElementById('adminBtn');
+        if(adminBtn) adminBtn.style.display = 'flex';
+    }
+}
+
+// نظام الدارك مود (الوضع الليلي)
+function toggleTheme() {
+    const body = document.body;
+    const btn = document.getElementById('themeBtn');
+    
+    if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.innerHTML = '<i class="fas fa-moon"></i>';
+        localStorage.setItem('theme', 'light');
+    } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.innerHTML = '<i class="fas fa-sun"></i>';
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+// تحميل الثيم المفضل عند فتح الموقع
+window.onload = () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        document.getElementById('themeBtn').innerHTML = '<i class="fas fa-sun"></i>';
+    }
+};
+
+function logout() {
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+}
