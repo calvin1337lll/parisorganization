@@ -75,6 +75,28 @@ function loadDashboard() {
     if (user.rank === 'OWNER') document.getElementById('adminBtn').style.display = 'block';
 }
 
+window.openModule = (id) => {
+    // إذا كان القسم سجن أو بنك أو أخبار، توجه للصفحة مباشرة
+    if (id === 'prison') {
+        window.location.href = 'prison.html';
+        return;
+    }
+    if (id === 'bank') {
+        window.location.href = 'bank.html';
+        return;
+    }
+    if (id === 'news') {
+        window.location.href = 'news.html';
+        return;
+    }
+
+    // باقي الأقسام التي لم نصنع لها صفحات بعد تفتح في نافذة Modal
+    const modal = document.getElementById('mainModal');
+    modal.style.display = 'block';
+    document.getElementById('modalTitle').innerText = id.toUpperCase();
+    document.getElementById('modalBody').innerHTML = "<p>سيتم تفعيل هذا القسم قريباً...</p>";
+};
 // الدوال العامة للموقع (نشر، حظر، خروج)
 window.logout = () => { sessionStorage.clear(); window.location.replace("login.html"); };
 window.closeModal = () => document.getElementById('mainModal').style.display = 'none';
+
