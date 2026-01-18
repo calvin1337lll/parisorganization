@@ -76,7 +76,11 @@ function loadDashboard() {
 }
 
 window.openModule = (id) => {
-    // إذا كان القسم سجن أو بنك أو أخبار، توجه للصفحة مباشرة
+    // توجيه الأقسام الأساسية لصفحاتها المستقلة
+    if (id === 'market') {
+        window.location.href = 'market.html';
+        return;
+    }
     if (id === 'prison') {
         window.location.href = 'prison.html';
         return;
@@ -93,10 +97,14 @@ window.openModule = (id) => {
         window.location.href = 'court.html';
         return;
     }
-    // ... باقي الأكواد للأقسام الأخرى
+
+    // الأقسام التي لم تصنع لها صفحات بعد تفتح في النافذة الافتراضية
+    const modal = document.getElementById('mainModal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.getElementById('modalTitle').innerText = id.toUpperCase();
+        document.getElementById('modalBody').innerHTML = "<p>سيتم تفعيل هذا القسم قريباً...</p>";
+    }
 };
-// الدوال العامة للموقع (نشر، حظر، خروج)
-window.logout = () => { sessionStorage.clear(); window.location.replace("login.html"); };
-window.closeModal = () => document.getElementById('mainModal').style.display = 'none';
 
 
