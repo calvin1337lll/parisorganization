@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paris Dashboard</title>
+    <title>Paris Dashboard - Realtime</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
-        // حماية فورية: إذا لم يسجل دخول، يطرده لصفحة الدخول قبل تحميل الصفحة
+        // حماية الصفحة: التوجيه لصفحة الدخول إذا لم يتم العثور على جلسة نشطة
         if (!sessionStorage.getItem('paris_session')) {
             window.location.href = 'login.html';
         }
@@ -18,22 +18,22 @@
         <aside class="sidebar">
             <div class="profile-section">
                 <div class="user-avatar" id="uInit">P</div>
-                <h3 id="uName">Loading...</h3>
-                <span id="uRank" class="rank-label">Rank</span>
+                <h3 id="uName">تحميل...</h3>
+                <span id="uRank" class="rank-label">رتبة</span>
             </div>
             <nav class="side-nav">
                 <button onclick="openModule('news')"><i class="fas fa-bullhorn"></i> الأخبار الرسمية</button>
-                <button id="adminBtn" style="display:none;" onclick="openAdminPanel()"><i class="fas fa-tools"></i> لوحة التحكم</button>
+                <button id="adminBtn" style="display:none;" onclick="openAdminPanel()"><i class="fas fa-tools"></i> لوحة الإدارة</button>
                 <button onclick="logout()" class="logout"><i class="fas fa-power-off"></i> خروج</button>
             </nav>
         </aside>
 
         <main class="main-content">
             <div class="grid-system">
-                <div class="card markets" onclick="openModule('markets')"><i class="fas fa-shopping-cart"></i><span>MARKETS</span></div>
-                <div class="card court" onclick="openModule('court')"><i class="fas fa-gavel"></i><span>COURT</span></div>
-                <div class="card news-card" onclick="openModule('news')"><i class="fas fa-tower-broadcast"></i><span>NEWS</span></div>
-                <div class="card prison" onclick="openModule('prison')"><i class="fas fa-bars-staggered"></i><span>PRISON</span></div>
+                <div class="card card-court" onclick="openModule('court')"><i class="fas fa-gavel"></i><span>COURT</span></div>
+                <div class="card card-markets" onclick="openModule('markets')"><i class="fas fa-shopping-cart"></i><span>MARKETS</span></div>
+                <div class="card card-prison" onclick="openModule('prison')"><i class="fas fa-bars-staggered"></i><span>PRISON</span></div>
+                <div class="card card-news" onclick="openModule('news')"><i class="fas fa-tower-broadcast"></i><span>NEWS</span></div>
                 
                 <div class="bank-center" onclick="openModule('bank')">
                     <div class="bank-content">
