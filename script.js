@@ -89,14 +89,14 @@ window.openModule = (id) => {
         window.location.href = 'news.html';
         return;
     }
-
-    // باقي الأقسام التي لم نصنع لها صفحات بعد تفتح في نافذة Modal
-    const modal = document.getElementById('mainModal');
-    modal.style.display = 'block';
-    document.getElementById('modalTitle').innerText = id.toUpperCase();
-    document.getElementById('modalBody').innerHTML = "<p>سيتم تفعيل هذا القسم قريباً...</p>";
+    if (id === 'court') {
+        window.location.href = 'court.html';
+        return;
+    }
+    // ... باقي الأكواد للأقسام الأخرى
 };
 // الدوال العامة للموقع (نشر، حظر، خروج)
 window.logout = () => { sessionStorage.clear(); window.location.replace("login.html"); };
 window.closeModal = () => document.getElementById('mainModal').style.display = 'none';
+
 
