@@ -3,228 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة منظمة باريس</title>
+    <title>منظمة باريس | Paris Org</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-main: #0d1b3e;
-            --gold: #f1d279;
-            --sidebar-bg: #0d1b3e;
-            --sidebar-text: #ffffff;
-            --shadow: rgba(0,0,0,0.1);
+            --bg: #f4f7f6; --card: #ffffff; --text: #0d1b3e; --gold: #f1d279; --dark: #0d1b3e;
         }
-
         [data-theme="dark"] {
-            --bg-color: #0a0a0c;
-            --card-bg: #16161a;
-            --text-main: #e1e1e1;
-            --gold: #f1d279;
-            --sidebar-bg: #1c1c21;
-            --sidebar-text: #ffffff;
-            --shadow: rgba(0,0,0,0.5);
+            --bg: #0a0b10; --card: #15161c; --text: #e1e1e1; --dark: #1c1d26;
+        }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; transition: 0.3s; }
+        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; }
+
+        /* الجانب الأيمن (البروفايل) */
+        .sidebar { width: 280px; background: var(--dark); color: white; display: flex; flex-direction: column; padding: 25px; box-shadow: 5px 0 15px rgba(0,0,0,0.2); z-index: 10; }
+        .user-box { text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 20px; }
+        .avatar { width: 70px; height: 70px; background: var(--gold); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; margin: 0 auto 10px; }
+        .nav-link { padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; margin-bottom: 5px; text-decoration: none; color: white; }
+        .nav-link:hover { background: rgba(255,255,255,0.1); color: var(--gold); }
+        .logout { color: #ff5e5e; margin-top: auto; }
+
+        /* المحتوى الرئيسي */
+        .main { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .org-name { position: absolute; top: 40px; font-size: 32px; font-weight: 700; color: var(--text); letter-spacing: 2px; }
+
+        /* وضع الدارك مود */
+        .theme-switch { position: absolute; top: 20px; left: 20px; background: var(--card); border: 1px solid var(--gold); color: var(--gold); width: 45px; height: 45px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+        /* الخريطة المربعة (Diamond Map) */
+        .map-container { position: relative; width: 420px; height: 420px; transform: rotate(45deg); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .map-box { 
+            background: var(--card); border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
+        }
+        .map-box:hover { transform: scale(1.05); border: 2px solid var(--gold); }
+        .map-box i { transform: rotate(-45deg); font-size: 30px; margin-bottom: 5px; }
+        .map-box span { transform: rotate(-45deg); font-weight: bold; font-size: 14px; }
+
+        /* زر البنك في المنتصف */
+        .bank-circle {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg);
+            width: 100px; height: 100px; background: var(--dark); border: 6px solid var(--bg); border-radius: 50%;
+            color: var(--gold); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; cursor: pointer;
         }
 
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: all 0.3s ease; }
-        body { background: var(--bg-color); margin: 0; display: flex; height: 100vh; overflow: hidden; color: var(--text-main); }
+        /* ألوان الأقسام */
+        .c-market { color: #e67e22; }
+        .c-court { color: #3498db; }
+        .c-prison { color: #2ecc71; }
+        .c-news { color: #9b59b6; }
 
-        /* الهيدر واسم المنظمة */
-        .org-title {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--text-main);
-            text-shadow: 1px 1px 2px var(--shadow);
-            z-index: 10;
-        }
-
-        /* القائمة الجانبية الاحترافية */
-        .sidebar {
-            width: 280px;
-            background: var(--sidebar-bg);
-            color: var(--sidebar-text);
-            display: flex;
-            flex-direction: column;
-            padding: 30px 20px;
-            box-shadow: 4px 0 15px var(--shadow);
-            z-index: 100;
-        }
-
-        .user-profile {
-            text-align: center;
-            padding-bottom: 30px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-        }
-
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            background: var(--gold);
-            color: #000;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            margin: 0 auto 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .nav-menu { list-style: none; padding: 0; flex: 1; }
-        .nav-item {
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: bold;
-        }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--gold); }
-        .nav-item.logout { color: #ff4d4d; margin-top: auto; }
-
-        /* منطقة الخريطة والأدوات */
-        .main-content { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; }
-
-        /* وضع الدارك مود في الزاوية */
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--card-bg);
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 10px var(--shadow);
-            z-index: 1000;
-        }
-
-        /* تصميم الخريطة المركزية (Dashboard) */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0;
-            width: 500px;
-            height: 500px;
-            background: var(--card-bg);
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px var(--shadow);
-            position: relative;
-            transform: rotate(45deg);
-        }
-
-        .grid-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            transform: rotate(-45deg);
-        }
-
-        .grid-item i { font-size: 35px; margin-bottom: 10px; }
-        .grid-item span { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
-
-        .item-market { background: #ffffff; color: #000; }
-        .item-court { background: #3498db; color: #fff; }
-        .item-news { background: #ffffff; color: #000; }
-        .item-prison { background: #2ecc71; color: #fff; }
-
-        [data-theme="dark"] .item-market, [data-theme="dark"] .item-news { background: #1c1c21; color: #fff; }
-
-        .center-bank {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            width: 120px;
-            height: 120px;
-            background: var(--sidebar-bg);
-            border: 8px solid var(--bg-color);
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--gold);
-            z-index: 5;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar { position: fixed; right: -280px; height: 100%; }
-            .dashboard-grid { width: 320px; height: 320px; }
-            .center-bank { width: 90px; height: 90px; }
-        }
+        @media (max-width: 600px) { .sidebar { display: none; } .map-container { width: 300px; height: 300px; } }
     </style>
 </head>
 <body>
 
-    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
-        <i class="fas fa-moon"></i>
-    </button>
+    <button class="theme-switch" onclick="toggleMode()"><i id="themeIcon" class="fas fa-moon"></i></button>
 
     <aside class="sidebar">
-        <div class="user-profile">
-            <div class="user-avatar" id="avatarChar">B</div>
-            <div id="uName" style="font-size: 18px; font-weight: bold;">بكر</div>
-            <div id="uRank" style="font-size: 12px; color: var(--gold); opacity: 0.8;">المالك</div>
+        <div class="user-box">
+            <div class="avatar" id="avtr">P</div>
+            <h3 id="userName">المستخدم</h3>
+            <p id="userRank" style="font-size: 12px; color: var(--gold);"></p>
         </div>
+        <div class="nav-link" onclick="location.href='news.html'"><i class="fas fa-rss"></i> آخر الأخبار</div>
         
-        <nav class="nav-menu">
-            <div class="nav-item" onclick="location.href='news.html'"><i class="fas fa-newspaper"></i> جريدة باريس</div>
-            <div class="nav-item" id="adminBtn" style="display:none;" onclick="alert('لوحة التحكم متوفرة في الصفحات الداخلية')">
-                <i class="fas fa-tools"></i> لوحة الإدارة
-            </div>
-            <div class="nav-item logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</div>
-        </nav>
+        <div id="adminPanelBtn" class="nav-link" style="display:none;" onclick="location.href='admin.html'">
+            <i class="fas fa-user-shield"></i> لوحة الإدارة
+        </div>
+
+        <div class="nav-link logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> خروج</div>
     </aside>
 
-    <main class="main-content">
-        <div class="org-title">منظمة باريس</div>
+    <main class="main">
+        <div class="org-name">منظمة باريس</div>
 
-        <div class="dashboard-grid">
-            <div class="grid-item item-market" onclick="location.href='market.html'">
-                <i class="fas fa-shopping-cart"></i>
-                <span>المتجر</span>
-            </div>
-            <div class="grid-item item-court" onclick="location.href='court.html'">
-                <i class="fas fa-gavel"></i>
-                <span>المحكمة</span>
-            </div>
-            <div class="grid-item item-news" onclick="location.href='news.html'">
-                <i class="fas fa-broadcast-tower"></i>
-                <span>الأخبار</span>
-            </div>
-            <div class="grid-item item-prison" onclick="location.href='prison.html'">
-                <i class="fas fa-bars-staggered"></i>
-                <span>السجن</span>
-            </div>
-
-            <div class="center-bank" onclick="location.href='bank.html'">
-                <i class="fas fa-university"></i>
-                <span style="font-size: 10px;">البنك</span>
-                <b style="font-size: 14px;">$</b>
+        <div class="map-container">
+            <div class="map-box c-market" onclick="location.href='market.html'"><i class="fas fa-shopping-cart"></i><span>المتجر</span></div>
+            <div class="map-box c-court" onclick="location.href='court.html'"><i class="fas fa-gavel"></i><span>المحكمة</span></div>
+            <div class="map-box c-news" onclick="location.href='news.html'"><i class="fas fa-newspaper"></i><span>الأخبار</span></div>
+            <div class="map-box c-prison" onclick="location.href='prison.html'"><i class="fas fa-lock"></i><span>السجن</span></div>
+            
+            <div class="bank-circle" onclick="location.href='bank.html'">
+                <i class="fas fa-university" style="font-size: 24px;"></i>
+                <span style="font-size: 12px;">البنك</span>
             </div>
         </div>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+        const session = JSON.parse(sessionStorage.getItem('paris_session'));
+        if (!session) location.href = 'login.html';
+
+        document.getElementById('userName').innerText = session.user;
+        document.getElementById('userRank').innerText = session.rank === 'OWNER' ? 'المالك' : (session.rank === 'ADMIN' ? 'مسؤول (ADMIN)' : 'عضو');
+        document.getElementById('avtr').innerText = session.user[0].toUpperCase();
+
+        // إظهار لوحة الإدارة للمالك والآدمن
+        if (session.rank === 'OWNER' || session.rank === 'ADMIN') {
+            document.getElementById('adminPanelBtn').style.display = 'flex';
+        }
+
+        function toggleMode() {
+            const b = document.body;
+            const icon = document.getElementById('themeIcon');
+            if(b.hasAttribute('data-theme')) {
+                b.removeAttribute('data-theme');
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('mode', 'light');
+            } else {
+                b.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('mode', 'dark');
+            }
+        }
+
+        if(localStorage.getItem('mode') === 'dark') toggleMode();
+
+        function logout() { sessionStorage.clear(); location.href = 'login.html'; }
+    </script>
 </body>
 </html>
