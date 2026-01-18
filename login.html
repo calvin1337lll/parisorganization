@@ -9,33 +9,21 @@
 </head>
 <body class="login-page">
     <div class="login-box">
+        <div class="logo">👑</div>
         <h2 id="authTitle">دخول النظام</h2>
         <div class="input-group">
             <input type="text" id="username" placeholder="اسم المستخدم (English Only)">
             <input type="password" id="pass" placeholder="كلمة السر (8 خانات فأكثر)">
         </div>
-        <button onclick="handleAuth()" class="btn-auth" id="authBtn">دخول</button>
+        
+        <button id="authBtnAction" class="btn-auth">دخول</button>
+
         <div class="toggle-link">
-            <a href="javascript:void(0)" onclick="toggleAuth()" id="toggleBtn">ليس لديك حساب؟ إنشاء حساب</a>
+            <a href="javascript:void(0)" id="switchModeBtn">ليس لديك حساب؟ إنشاء حساب</a>
         </div>
-        <p id="errorMsg" style="color: red; font-size: 13px; margin-top: 10px;"></p>
+        <div id="statusMessage" style="margin-top:10px; font-size:12px;"></div>
     </div>
+
     <script type="module" src="script.js"></script>
-    <script>
-        function toggleAuth() {
-            const title = document.getElementById('authTitle');
-            const btn = document.getElementById('authBtn');
-            const toggle = document.getElementById('toggleBtn');
-            if (title.innerText.includes("دخول")) {
-                title.innerText = "إنشاء حساب جديد";
-                btn.innerText = "تسجيل";
-                toggle.innerText = "لديك حساب؟ تسجيل دخول";
-            } else {
-                title.innerText = "دخول النظام";
-                btn.innerText = "دخول";
-                toggle.innerText = "ليس لديك حساب؟ إنشاء حساب";
-            }
-        }
-    </script>
 </body>
 </html>
