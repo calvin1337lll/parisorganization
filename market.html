@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر باريس الشامل - Paris Market</title>
+    <title>متجر باريس - Paris Market</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -11,43 +11,41 @@
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
         body { background: #f0f2f5; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* الهيدر */
-        .market-header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
-        .back-btn:hover { background: var(--gold); color: var(--dark); }
+        .market-header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--gold); }
+        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
 
         .main-container { display: flex; flex: 1; overflow: hidden; }
 
-        /* القائمة الجانبية المحدثة */
         .market-sidebar { width: 240px; background: var(--white); border-left: 1px solid #ddd; display: flex; flex-direction: column; padding: 20px; gap: 10px; }
-        .cat-btn { width: 100%; padding: 12px; border: none; background: #f8f9fa; border-radius: 10px; cursor: pointer; text-align: right; font-weight: bold; display: flex; align-items: center; gap: 10px; transition: 0.3s; color: var(--dark); }
-        .cat-btn.active { background: var(--dark); color: var(--gold); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .cat-btn i { width: 25px; text-align: center; }
+        .cat-btn { width: 100%; padding: 12px; border: none; background: #f8f9fa; border-radius: 10px; cursor: pointer; text-align: right; font-weight: bold; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .cat-btn.active { background: var(--dark); color: var(--gold); }
 
-        /* منطقة المحتوى */
-        .content-area { flex: 1; padding: 25px; overflow-y: auto; background: #f0f2f5; }
+        .content-area { flex: 1; padding: 25px; overflow-y: auto; }
 
-        /* لوحة التحكم للمالك */
-        .admin-market-box { background: white; padding: 20px; border-radius: 15px; margin-bottom: 25px; border: 2px dashed var(--blue); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .market-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        input { padding: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; font-size: 14px; }
-        .add-item-btn { width: 100%; padding: 12px; background: var(--dark); color: var(--gold); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .add-item-btn:hover { background: #162a5a; }
+        /* لوحة التحكم للمالك المحدثة */
+        .admin-market-box { background: white; padding: 20px; border-radius: 15px; margin-bottom: 25px; border: 2px dashed var(--blue); }
+        .market-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        input, textarea { padding: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; font-size: 14px; width: 100%; }
+        textarea { grid-column: span 2; height: 60px; resize: none; }
+        .add-item-btn { width: 100%; padding: 12px; background: var(--dark); color: var(--gold); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
         /* شبكة المنتجات */
-        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-        .product-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; transition: 0.3s; position: relative; display: flex; flex-direction: column; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .product-img { width: 100%; height: 160px; background: #fdfdfd; object-fit: contain; padding: 15px; border-bottom: 1px solid #f5f5f5; }
-        .product-info { padding: 15px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .product-info h3 { font-size: 16px; color: var(--dark); margin-bottom: 8px; }
-        .product-price { color: #2ecc71; font-weight: bold; font-size: 18px; margin-bottom: 12px; }
-        .buy-btn { width: 100%; padding: 10px; background: var(--gold); color: var(--dark); border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .buy-btn:hover { filter: brightness(0.9); }
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+        .product-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; transition: 0.3s; position: relative; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-img { width: 100%; height: 160px; object-fit: contain; padding: 15px; background: #fdfdfd; }
+        .product-info { padding: 15px; text-align: center; }
+        .product-info h3 { font-size: 17px; color: var(--dark); margin-bottom: 5px; }
         
-        .del-item { position: absolute; top: 10px; left: 10px; color: #e74c3c; cursor: pointer; background: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 5; }
+        /* تصميم الوصف */
+        .product-desc { font-size: 12px; color: #666; margin-bottom: 10px; line-height: 1.4; min-height: 34px; }
+        
+        .product-price { color: #2ecc71; font-weight: bold; font-size: 18px; margin-bottom: 12px; display: block; }
+        .buy-btn { width: 100%; padding: 10px; background: var(--gold); color: var(--dark); border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        
+        .del-item { position: absolute; top: 10px; left: 10px; color: #e74c3c; cursor: pointer; background: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        @media (max-width: 768px) { .market-sidebar { display: none; } .market-inputs { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .market-sidebar { display: none; } .market-inputs { grid-template-columns: 1fr; } textarea { grid-column: span 1; } }
     </style>
 </head>
 <body>
@@ -57,25 +55,26 @@
             <i class="fas fa-store" style="color:var(--gold); font-size: 24px;"></i>
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
         </div>
-        <h2 id="pageTitle">متجر الرتب</h2>
+        <h2 id="pageTitle">قائمة الرتب</h2>
         <div id="uNameDisplay" style="color: var(--gold); font-weight: bold;">المتجر</div>
     </header>
 
     <div class="main-container">
         <aside class="market-sidebar">
-            <button class="cat-btn active" onclick="setTab('ranks', this)"><i class="fas fa-crown"></i> قائمة الرتب</button>
-            <button class="cat-btn" onclick="setTab('gifts', this)"><i class="fas fa-gift"></i> قائمة الهدايا</button>
-            <button class="cat-btn" onclick="setTab('sources', this)"><i class="fas fa-code"></i> قائمة السورسات</button>
-            <button class="cat-btn" onclick="setTab('designs', this)"><i class="fas fa-paint-brush"></i> قائمة التصاميم</button>
+            <button class="cat-btn active" onclick="setTab('ranks', this)"><i class="fas fa-crown"></i> الرتب</button>
+            <button class="cat-btn" onclick="setTab('gifts', this)"><i class="fas fa-gift"></i> الهدايا</button>
+            <button class="cat-btn" onclick="setTab('sources', this)"><i class="fas fa-code"></i> السورسات</button>
+            <button class="cat-btn" onclick="setTab('designs', this)"><i class="fas fa-paint-brush"></i> التصاميم</button>
         </aside>
 
         <main class="content-area">
             <div id="adminPanel" style="display:none;" class="admin-market-box">
-                <h3 style="margin-bottom: 15px; font-size: 15px; color: var(--dark);"><i class="fas fa-plus-circle"></i> إضافة منتج جديد لهذا القسم:</h3>
+                <h3 style="margin-bottom: 15px; font-size: 15px;">إضافة منتج جديد:</h3>
                 <div class="market-inputs">
-                    <input type="text" id="itemName" placeholder="اسم المنتج (مثلاً: رتبة ملك)">
-                    <input type="text" id="itemPrice" placeholder="السعر (مثلاً: 50$)">
+                    <input type="text" id="itemName" placeholder="اسم المنتج">
+                    <input type="text" id="itemPrice" placeholder="السعر">
                     <input type="text" id="itemImg" placeholder="رابط الصورة (اختياري)">
+                    <textarea id="itemDesc" placeholder="اكتب وصفاً للمنتج (مميزاته، مدته، إلخ...)"></textarea>
                 </div>
                 <button class="add-item-btn" onclick="addItem()">إضافة المنتج للمتجر</button>
             </div>
@@ -99,8 +98,7 @@
         const userData = JSON.parse(sessionStorage.getItem('paris_session'));
         let currentCat = 'ranks';
 
-        // روابط صور افتراضية للأقسام في حال لم يضع المالك صورة
-        const defaultImages = {
+        const defaultImgs = {
             ranks: 'https://cdn-icons-png.flaticon.com/512/1062/1062829.png',
             gifts: 'https://cdn-icons-png.flaticon.com/512/3112/3112733.png',
             sources: 'https://cdn-icons-png.flaticon.com/512/2165/2165152.png',
@@ -113,13 +111,6 @@
 
         window.setTab = (cat, btn) => {
             currentCat = cat;
-            const titles = {
-                'ranks': 'قائمة الرتب', 
-                'gifts': 'قائمة الهدايا', 
-                'sources': 'قائمة السورسات', 
-                'designs': 'قائمة التصاميم'
-            };
-            document.getElementById('pageTitle').innerText = titles[cat];
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             loadItems();
@@ -128,17 +119,17 @@
         window.addItem = async () => {
             const name = document.getElementById('itemName').value;
             const price = document.getElementById('itemPrice').value;
-            const img = document.getElementById('itemImg').value || defaultImages[currentCat];
+            const desc = document.getElementById('itemDesc').value;
+            const img = document.getElementById('itemImg').value || defaultImgs[currentCat];
 
-            if(!name || !price) return alert("يرجى إدخال الاسم والسعر على الأقل");
+            if(!name || !price) return alert("أدخل البيانات الأساسية");
 
-            const itemRef = ref(db, `market/${currentCat}`);
-            await push(itemRef, { name, price, img });
+            await push(ref(db, `market/${currentCat}`), { name, price, desc, img });
             
             document.getElementById('itemName').value = "";
             document.getElementById('itemPrice').value = "";
+            document.getElementById('itemDesc').value = "";
             document.getElementById('itemImg').value = "";
-            alert("تمت إضافة المنتج بنجاح!");
         };
 
         function loadItems() {
@@ -150,32 +141,22 @@
                         const itm = items[id];
                         html += `
                             <div class="product-card">
-                                ${userData.rank === 'OWNER' ? `<i class="fas fa-trash del-item" onclick="deleteItem('${id}')" title="حذف"></i>` : ''}
-                                <img src="${itm.img}" class="product-img" onerror="this.src='${defaultImages[currentCat]}'">
+                                ${userData.rank === 'OWNER' ? `<i class="fas fa-trash del-item" onclick="deleteItem('${id}')"></i>` : ''}
+                                <img src="${itm.img}" class="product-img">
                                 <div class="product-info">
                                     <h3>${itm.name}</h3>
-                                    <div class="product-price">${itm.price}</div>
-                                    <button class="buy-btn" onclick="confirmOrder('${itm.name}')">طلب شراء</button>
+                                    <p class="product-desc">${itm.desc || 'لا يوجد وصف متاح'}</p>
+                                    <span class="product-price">${itm.price}</span>
+                                    <button class="buy-btn" onclick="alert('تواصل مع الإدارة لشراء: ${itm.name}')">طلب شراء</button>
                                 </div>
                             </div>`;
                     });
-                } else {
-                    html = "<div style='grid-column: 1/-1; text-align:center; padding:50px; opacity:0.5;'><i class='fas fa-box-open fa-3x'></i><p>لا توجد منتجات متوفرة حالياً</p></div>";
-                }
+                } else html = "<p style='grid-column: 1/-1; text-align:center; padding:50px; opacity:0.5;'>القسم فارغ</p>";
                 document.getElementById('itemsGrid').innerHTML = html;
             });
         }
 
-        window.confirmOrder = (name) => {
-            alert(`لقد اخترت طلب: ${name}\nيرجى التواصل مع المالك (OWNER) لإتمام عملية الدفع والاستلام.`);
-        };
-
-        window.deleteItem = (id) => {
-            if(confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) {
-                remove(ref(db, `market/${currentCat}/${id}`));
-            }
-        };
-
+        window.deleteItem = (id) => { if(confirm("حذف؟")) remove(ref(db, `market/${currentCat}/${id}`)); };
         loadItems();
     </script>
 </body>
