@@ -2,43 +2,136 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم</title>
+    <title>لوحة التحكم العليا | باريس</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background: #000; color: white; font-family: 'Cairo', sans-serif; padding: 20px; }
-        .box { background: #111; padding: 20px; border-radius: 15px; border: 1px solid #333; max-width: 500px; margin: auto; border-top: 4px solid #f1d279; }
-        input, textarea, select { width: 100%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid #444; color: white; }
-        button { width: 100%; padding: 12px; background: #f1d279; color: #000; font-weight: bold; border: none; cursor: pointer; }
+        :root { --gold: #f1d279; --red: #ff4757; --dark: #000; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--dark); color: white; padding: 20px; }
+        
+        .panel-container { max-width: 700px; margin: auto; }
+        .section-box { 
+            background: #111; padding: 25px; border-radius: 15px; 
+            border: 1px solid #222; margin-bottom: 30px; border-top: 4px solid var(--gold);
+        }
+        
+        /* قسم المالك الخاص */
+        .owner-section { border-top: 4px solid var(--red); display: none; }
+        
+        h3 { margin-bottom: 20px; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+        input, textarea, select { 
+            width: 100%; padding: 12px; margin: 10px 0; 
+            background: #000; border: 1px solid #333; color: white; border-radius: 8px; 
+        }
+        button { 
+            width: 100%; padding: 13px; background: var(--gold); color: black; 
+            border: none; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s;
+        }
+        button:hover { opacity: 0.8; }
+        .btn-red { background: var(--red); color: white; margin-top: 10px; }
+
+        .user-result { 
+            background: #1a1a1a; padding: 15px; border-radius: 8px; 
+            margin-top: 15px; border-right: 4px solid var(--gold); display: none;
+        }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h3>نشر محتوى جديد</h3>
-        <select id="section">
-            <option value="news">الأخبار</option>
-            <option value="market">المتجر</option>
-            <option value="prison">السجن</option>
-            <option value="court">المحكمة</option>
-        </select>
-        <input type="text" id="title" placeholder="العنوان">
-        <textarea id="body" placeholder="التفاصيل"></textarea>
-        <input type="text" id="img" placeholder="رابط الصورة (اختياري)">
-        <button id="pub">نشر الآن</button>
+
+    <div class="panel-container">
+        <h1 style="text-align: center; margin-bottom: 30px; color: var(--gold);">مركز التحكم</h1>
+
+        <div class="section-box">
+            <h3><i class="fas fa-edit"></i> النشر في الأقسام</h3>
+            <select id="target">
+                <option value="news">الأخبار</option>
+                <option value="market">المتجر</option>
+                <option value="prison">السجن</option>
+                <option value="court">المحكمة</option>
+            </select>
+            <input type="text" id="pTitle" placeholder="العنوان">
+            <textarea id="pBody" placeholder="التفاصيل..." rows="3"></textarea>
+            <input type="text" id="pImg" placeholder="رابط الصورة">
+            <button onclick="publish()">نشر الآن</button>
+        </div>
+
+        <div id="ownerMenu" class="section-box owner-section">
+            <h3><i class="fas fa-crown"></i> إدارة الإدارة (للمالك فقط)</h3>
+            <p style="font-size: 12px; color: #888; margin-bottom: 10px;">ابحث عن المستخدم بالاسم المسجل لرفع رتبته أو تنزيله</p>
+            
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="searchName" placeholder="اكتب اسم المستخدم الفعلي...">
+                <button style="width: 100px;" onclick="searchUser()">بحث</button>
+            </div>
+
+            <div id="userInfo" class="user-result">
+                <p>الاسم: <span id="resName" style="color: var(--gold);"></span></p>
+                <p>الرتبة الحالية: <span id="resRank" style="font-weight: bold;"></span></p>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="updateRank('ADMIN')">ترقية لآدمن</button>
+                    <button class="btn-red" onclick="updateRank('USER')">تنزيل لمواطن</button>
+                </div>
+            </div>
+        </div>
     </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        const app = initializeApp({ apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" });
+        import { getDatabase, ref, push, get, child, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", 
+            databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" 
+        };
+        const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        document.getElementById('pub').onclick = () => {
-            const path = document.getElementById('section').value;
-            push(ref(db, path), {
-                title: document.getElementById('title').value,
-                body: document.getElementById('body').value,
-                image: document.getElementById('img').value,
-                time: new Date().toLocaleTimeString()
+        const session = JSON.parse(localStorage.getItem('paris_session'));
+        
+        // التحقق من الصلاحيات
+        if(session && session.rank === 'OWNER') {
+            document.getElementById('ownerMenu').style.display = 'block';
+        }
+
+        // وظيفة النشر
+        window.publish = async () => {
+            const data = {
+                title: document.getElementById('pTitle').value,
+                body: document.getElementById('pBody').value,
+                image: document.getElementById('pImg').value,
+                time: new Date().toLocaleString('ar-EG')
+            };
+            if(!data.title) return alert("أدخل العنوان");
+            await push(ref(db, document.getElementById('target').value), data);
+            alert("تم النشر بنجاح");
+        };
+
+        // وظيفة البحث عن مستخدم
+        let foundUserKey = null;
+        window.searchUser = async () => {
+            const name = document.getElementById('searchName').value.trim();
+            const usersRef = ref(db, 'users');
+            const snapshot = await get(usersRef);
+            
+            let found = false;
+            snapshot.forEach((child) => {
+                if(child.val().user === name) {
+                    foundUserKey = child.key;
+                    document.getElementById('resName').innerText = child.val().user;
+                    document.getElementById('resRank').innerText = child.val().rank || 'USER';
+                    document.getElementById('userInfo').style.display = 'block';
+                    found = true;
+                }
             });
-            alert("تم النشر!");
+            if(!found) alert("المستخدم غير موجود!");
+        };
+
+        // وظيفة تغيير الرتبة
+        window.updateRank = async (newRank) => {
+            if(!foundUserKey) return;
+            await update(ref(db, `users/${foundUserKey}`), { rank: newRank });
+            alert(`تم تغيير الرتبة إلى ${newRank}`);
+            searchUser(); // تحديث البيانات المعروضة
         };
     </script>
 </body>
