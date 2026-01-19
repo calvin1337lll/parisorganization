@@ -3,195 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صحيفة باريس | الأخبار العاجلة</title>
+    <title>صحيفة باريس | الأخبار</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #f1d279; --dark: #000; --card-bg: #0a0a0a; --accent: #111; }
-        
+        :root { --gold: #f1d279; --dark: #000; --card-bg: #0a0a0a; }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
         
-        body { 
-            background-color: var(--dark); 
-            color: white; 
-            line-height: 1.6;
-            padding-bottom: 50px;
-        }
+        body { background-color: var(--dark); color: white; min-height: 100vh; padding-bottom: 50px; }
 
-        /* الهيدر العلوي */
-        .news-header-top {
-            background: #050a1a;
-            padding: 40px 20px;
-            text-align: center;
-            border-bottom: 3px solid var(--gold);
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* زر العودة الاحترافي في الزاوية */
+        .back-nav {
+            position: fixed; top: 20px; right: 20px; text-decoration: none;
+            color: var(--gold); display: flex; align-items: center; gap: 8px;
+            font-weight: bold; padding: 8px 18px; border: 1px solid var(--gold);
+            border-radius: 50px; transition: 0.3s; background: rgba(5, 10, 26, 0.9);
+            z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
+        .back-nav:hover { background: var(--gold); color: black; box-shadow: 0 0 20px var(--gold); }
 
-        .news-header-top h1 {
-            color: var(--gold);
-            font-size: 35px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+        .header { text-align: center; padding: 60px 20px; border-bottom: 2px solid var(--gold); margin-bottom: 40px; background: #050a1a; }
+        .header h1 { font-size: 35px; color: var(--gold); }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
 
-        /* كرت الخبر الاحترافي */
+        /* كرت الخبر */
         .news-card {
-            background: var(--card-bg);
-            border: 1px solid #222;
-            border-radius: 20px;
-            margin-bottom: 40px;
-            overflow: hidden;
-            position: relative;
-            transition: 0.4s;
+            background: var(--card-bg); border: 1px solid #1a1a1a; border-radius: 15px;
+            margin-bottom: 30px; overflow: hidden; position: relative; transition: 0.4s;
         }
+        .news-card:hover { transform: translateY(-5px); border-color: var(--gold); }
 
-        /* تأثير الخطوط الذهبية في الزوايا */
+        /* تأثير الزوايا الذهبية */
         .news-card::before, .news-card::after {
-            content: ''; position: absolute; width: 40px; height: 40px; 
-            border: 2px solid var(--gold); transition: 0.5s; opacity: 0.3;
+            content: ''; position: absolute; width: 30px; height: 30px; border: 2px solid var(--gold); opacity: 0; transition: 0.4s;
         }
-        .news-card::before { top: 0; right: 0; border-bottom: none; border-left: none; }
-        .news-card::after { bottom: 0; left: 0; border-top: none; border-right: none; }
+        .news-card::before { top: 10px; left: 10px; border-bottom: 0; border-right: 0; }
+        .news-card::after { bottom: 10px; right: 10px; border-top: 0; border-left: 0; }
+        .news-card:hover::before, .news-card:hover::after { opacity: 0.6; }
 
-        .news-card:hover { transform: translateY(-10px); border-color: var(--gold); }
-        .news-card:hover::before, .news-card:hover::after { width: 100%; height: 100%; opacity: 0.1; }
-
-        /* الصورة داخل الخبر */
-        .news-img-wrapper {
-            width: 100%;
-            height: 400px;
-            background: #111;
-            overflow: hidden;
-        }
-
-        .news-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: 0.5s;
-        }
-
-        .news-card:hover .news-img-wrapper img { transform: scale(1.05); }
-
-        /* محتوى الخبر */
-        .news-info {
-            padding: 25px;
-        }
-
-        .news-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: var(--gold);
-            margin-bottom: 15px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 10px;
-        }
-
-        .news-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: white;
-        }
-
-        .news-text {
-            font-size: 16px;
-            color: #bbb;
-            text-align: justify;
-        }
-
-        /* زر العودة */
-        .back-btn {
-            position: fixed; bottom: 20px; right: 20px;
-            background: var(--gold); color: black;
-            width: 50px; height: 50px; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            text-decoration: none; font-size: 20px; font-weight: bold;
-            box-shadow: 0 5px 15px rgba(241, 210, 121, 0.4);
-            z-index: 1000;
-        }
-
-        /* رسالة في حال عدم وجود أخبار */
-        .no-news {
-            text-align: center;
-            padding: 50px;
-            color: #555;
-            font-size: 18px;
-        }
+        .news-img { width: 100%; height: 350px; object-fit: cover; border-bottom: 1px solid #222; }
+        .news-content { padding: 25px; }
+        .news-meta { color: var(--gold); font-size: 13px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .news-title { font-size: 24px; font-weight: bold; margin-bottom: 15px; }
+        .news-body { color: #ccc; line-height: 1.8; text-align: justify; }
     </style>
 </head>
 <body>
 
-    <a href="index.html" class="back-btn"><i class="fas fa-home"></i></a>
+    <a href="index.html" class="back-nav">
+        <i class="fas fa-arrow-right"></i>
+        <span>العودة للرئيسية</span>
+    </a>
 
-    <header class="news-header-top">
-        <h1>صحيفة باريس الرسمية</h1>
-        <p style="color: #666;">آخر التطورات والأخبار العاجلة في المدينة</p>
+    <header class="header">
+        <h1><i class="fas fa-newspaper"></i> صحيفة باريس</h1>
+        <p style="color: #666; margin-top: 10px;">نوافيكم بكل ما هو جديد في قلب المدينة</p>
     </header>
 
-    <div class="container" id="news-container">
-        <div class="no-news">جاري تحميل الأخبار...</div>
-    </div>
+    <div class="container" id="news-feed">
+        </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // إعدادات Firebase
-        const firebaseConfig = { 
-            apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", 
-            databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", 
-            projectId: "webparis-ef921" 
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const newsContainer = document.getElementById('news-container');
 
-        // جلب الأخبار من قاعدة البيانات
         onValue(ref(db, 'news'), (snapshot) => {
-            newsContainer.innerHTML = ""; // مسح محتوى التحميل
+            const feed = document.getElementById('news-feed');
+            feed.innerHTML = "";
             
-            if (!snapshot.exists()) {
-                newsContainer.innerHTML = "<div class='no-news'>لا توجد أخبار منشورة حالياً.</div>";
+            if(!snapshot.exists()) {
+                feed.innerHTML = "<p style='text-align:center; color:#444;'>لا توجد أخبار منشورة حالياً.</p>";
                 return;
             }
 
-            // تحويل البيانات لمصفوفة وعكسها لعرض الأحدث أولاً
-            const newsList = [];
-            snapshot.forEach((child) => {
-                newsList.push(child.val());
-            });
-            newsList.reverse();
+            const newsArray = [];
+            snapshot.forEach(child => { newsArray.push(child.val()); });
+            newsArray.reverse(); // الأحدث أولاً
 
-            newsList.forEach((data) => {
-                const newsHTML = `
+            newsArray.forEach(data => {
+                feed.innerHTML += `
                     <div class="news-card">
-                        ${data.image ? `
-                            <div class="news-img-wrapper">
-                                <img src="${data.image}" alt="خبر باريس">
-                            </div>
-                        ` : ''}
-                        
-                        <div class="news-info">
+                        ${data.image ? `<img src="${data.image}" class="news-img">` : ''}
+                        <div class="news-content">
                             <div class="news-meta">
-                                <span><i class="fas fa-user-shield"></i> المكتب الإعلامي</span>
-                                <span><i class="fas fa-clock"></i> ${data.time}</span>
+                                <span><i class="fas fa-user-edit"></i> الإدارة</span>
+                                <span><i class="fas fa-calendar-alt"></i> ${data.time}</span>
                             </div>
                             <div class="news-title">${data.title}</div>
-                            <div class="news-text">${data.body}</div>
+                            <div class="news-body">${data.body}</div>
                         </div>
-                    </div>
-                `;
-                newsContainer.innerHTML += newsHTML;
+                    </div>`;
             });
         });
     </script>
