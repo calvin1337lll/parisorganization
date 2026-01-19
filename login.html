@@ -3,21 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دخول - Paris Online</title>
-    <link rel="stylesheet" href="style.css">
+    <title>دخول - منظمة باريس</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #0d1b3e; font-family: 'Cairo', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 400px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        button { width: 100%; padding: 12px; background: #0d1b3e; color: #f1d279; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    </style>
 </head>
-<body class="login-page">
-    <div class="login-box">
-        <div class="logo">👑</div>
-        <h2 id="authTitle">دخول النظام</h2>
-        <div class="input-group">
-            <input type="text" id="username" placeholder="اسم المستخدم">
-            <input type="password" id="pass" placeholder="كلمة السر (8 خانات)">
-        </div>
-        <button id="mainAuthBtn" class="btn-auth">دخول</button>
-        <button id="switchBtn" class="btn-link">ليس لديك حساب؟ إنشاء حساب</button>
+<body>
+    <div class="login-card">
+        <h2 style="color: #0d1b3e;">دخول النظام</h2>
+        <input type="text" id="username" placeholder="اسم المستخدم">
+        <input type="password" id="password" placeholder="كلمة السر">
+        <button onclick="handleLogin()">دخول</button>
     </div>
-    <script type="module" src="script.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4",
+            databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com",
+            projectId: "webparis-ef921",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.handleLogin = async () => {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            if(!user || !pass) return alert("أدخل البيانات");
+
+            const userRef = ref(db, 'users/' + user);
+            const snapshot = await get(userRef);
+
+            if (snapshot.exists() && snapshot.val().password === pass) {
+                // حفظ البيانات في localStorage لضمان استقرار الأندرويد
+                localStorage.setItem('paris_session', JSON.stringify({
+                    user: user,
+                    rank: snapshot.val().rank || 'MEMBER'
+                }));
+                window.location.replace('index.html'); // استخدام replace لمنع حلقة التحديث
+            } else {
+                alert("بيانات خاطئة");
+            }
+        };
+    </script>
 </body>
 </html>
