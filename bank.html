@@ -2,82 +2,153 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>البنك المركزي - باريس</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البنك المركزي | PARIS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --dark: #0d1b3e; --gold: #f1d279; }
-        body { font-family: 'Cairo'; background: #f4f7f6; margin: 0; padding-bottom: 30px; }
-        body.dark-mode { background: #121212; color: white; }
-        #global-notice { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: var(--gold); padding: 15px; border-radius: 12px; border: 2px solid var(--gold); z-index: 10000; transition: 0.5s; text-align: center; min-width: 300px; }
-        .bank-card { background: linear-gradient(135deg, #0d1b3e, #1e3a8a); color: white; padding: 40px; margin: 20px auto; border-radius: 25px; max-width: 450px; text-align: center; border-bottom: 5px solid var(--gold); }
-        .input-box { background: white; padding: 20px; border-radius: 15px; max-width: 450px; margin: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .dark-mode .input-box { background: #1e1e1e; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; }
-        .btn { width: 100%; padding: 15px; background: var(--dark); color: var(--gold); border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        :root { --gold: #f1d279; --dark: #000; --card-bg: #0a0a0a; }
+        
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: var(--dark); 
+            color: white; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* أيقونة الرجوع الاحترافية */
+        .back-nav {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-decoration: none;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            padding: 8px 15px;
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            transition: 0.3s;
+            background: rgba(241, 210, 121, 0.05);
+        }
+        .back-nav:hover {
+            background: var(--gold);
+            color: black;
+            box-shadow: 0 0 15px var(--gold);
+        }
+
+        /* هيدر البنك الفخم */
+        .bank-header {
+            text-align: center;
+            margin-top: 80px;
+            margin-bottom: 50px;
+        }
+        .bank-header i {
+            font-size: 80px;
+            color: var(--gold);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(241, 210, 121, 0.3));
+        }
+        .bank-header h1 {
+            font-size: 32px;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+        }
+
+        /* كرت عرض البيانات المالية */
+        .transaction-card {
+            background: var(--card-bg);
+            border: 1px solid #1a1a1a;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border-right: 4px solid var(--gold);
+            transition: 0.4s;
+        }
+
+        /* تأثير الزوايا الذهبية عند اللمس */
+        .transaction-card::before, .transaction-card::after {
+            content: ''; position: absolute; width: 25px; height: 25px; 
+            border: 2px solid var(--gold); transition: 0.4s; opacity: 0;
+        }
+        .transaction-card::before { top: 10px; left: 10px; border-bottom: 0; border-right: 0; }
+        .transaction-card::after { bottom: 10px; right: 10px; border-top: 0; border-left: 0; }
+
+        .transaction-card:hover {
+            transform: scale(1.02);
+            background: #111;
+        }
+        .transaction-card:hover::before, .transaction-card:hover::after { opacity: 0.5; }
+
+        .t-title { color: var(--gold); font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+        .t-body { color: #ccc; font-size: 15px; line-height: 1.6; }
+        .t-time { font-size: 12px; color: #555; margin-top: 15px; display: block; text-align: left; }
+
+        .no-data { text-align: center; padding: 40px; color: #444; font-size: 18px; }
     </style>
 </head>
 <body>
-    <div id="global-notice"><i class="fas fa-bell"></i> <span id="notice-msg"></span></div>
 
-    <div style="padding: 15px;"><a href="index.html" style="color:var(--dark); text-decoration: none;"><i class="fas fa-arrow-right"></i> الرئيسية</a></div>
+    <a href="index.html" class="back-nav">
+        <i class="fas fa-arrow-right"></i>
+        <span>العودة للرئيسية</span>
+    </a>
 
-    <div class="bank-card">
-        <p style="opacity: 0.8;">الرصيد المتاح</p>
-        <h1 id="myMoney" style="font-size: 45px; color: var(--gold);">0 $</h1>
-    </div>
+    <header class="bank-header">
+        <i class="fas fa-university"></i>
+        <h1>البنك المركزي لمدينة باريس</h1>
+        <p style="color: #666; margin-top: 10px;">إدارة الأرصدة والبيانات المالية الرسمية</p>
+    </header>
 
-    <div class="input-box">
-        <h3><i class="fas fa-exchange-alt"></i> تحويل أموال</h3>
-        <input type="text" id="toUser" placeholder="اسم المستلم">
-        <input type="number" id="amount" placeholder="المبلغ">
-        <button class="btn" onclick="transfer()">إرسال الآن</button>
+    <div class="container" id="bank-content">
+        <div class="no-data">جاري مزامنة البيانات المالية...</div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, update, get, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const userData = JSON.parse(localStorage.getItem('paris_session'));
-
-        // مراقبة الرصيد
-        onValue(ref(db, `users/${userData.user}/money`), (snap) => {
-            document.getElementById('myMoney').innerText = (snap.val() || 0) + " $";
-        });
-
-        // تحويل أموال
-        window.transfer = async () => {
-            const to = document.getElementById('toUser').value.trim();
-            const amt = parseInt(document.getElementById('amount').value);
-            if(!to || !amt || amt <= 0) return alert("خطأ في البيانات");
-
-            const senderRef = ref(db, `users/${userData.user}`);
-            const recvRef = ref(db, `users/${to}`);
-
-            const senderSnap = await get(senderRef);
-            const recvSnap = await get(recvRef);
-
-            if(!recvSnap.exists()) return alert("المستلم غير موجود");
-            if(senderSnap.val().money < amt) return alert("رصيدك غير كافي");
-
-            await update(senderRef, { money: senderSnap.val().money - amt });
-            await update(recvRef, { money: (recvSnap.val().money || 0) + amt });
-            alert("تم التحويل!");
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", 
+            databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" 
         };
 
-        // استقبال الإشعارات
-        onChildAdded(ref(db, 'notifications'), (snap) => {
-            const notice = document.getElementById('global-notice');
-            document.getElementById('notice-msg').innerText = snap.val().message;
-            notice.classList.add('show');
-            if (Notification.permission === 'granted') new Notification("تنبيه بنكي", { body: snap.val().message });
-            setTimeout(() => notice.classList.remove('show'), 7000);
-        });
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const contentDiv = document.getElementById('bank-content');
 
-        if (localStorage.getItem('paris_theme') === 'dark') document.body.classList.add('dark-mode');
+        // جلب البيانات المالية المنشورة من فرع 'bank' (يمكنك النشر له من لوحة الإدارة)
+        onValue(ref(db, 'bank'), (snapshot) => {
+            contentDiv.innerHTML = "";
+            
+            if (!snapshot.exists()) {
+                contentDiv.innerHTML = "<div class='no-data'>لا توجد سجلات مالية منشورة حالياً.</div>";
+                return;
+            }
+
+            snapshot.forEach((child) => {
+                const data = child.val();
+                contentDiv.innerHTML += `
+                    <div class="transaction-card">
+                        <div class="t-title">${data.title}</div>
+                        <div class="t-body">${data.body}</div>
+                        <span class="t-time">${data.time || ''}</span>
+                    </div>
+                `;
+            });
+        });
     </script>
 </body>
 </html>
