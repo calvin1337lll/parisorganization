@@ -1,23 +1,9 @@
-// هذا الكود يوضع في بداية كل صفحة فرعية
-const sessionData = localStorage.getItem('paris_session');
-if (!sessionData) {
-    window.location.replace('login.html');
-} else {
-    const user = JSON.parse(sessionData);
-    // إذا كنت في صفحة الإدارة، تأكد من الرتبة
-    if (window.location.href.includes('admin.html')) {
-        if (user.rank !== 'OWNER' && user.rank !== 'ADMIN') {
-            window.location.replace('index.html');
-        }
-    }
-}
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أخبار باريس - السحابة الذكية</title>
+    <title>أخبار باريس - Paris News</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -27,47 +13,45 @@ if (!sessionData) {
         
         /* الهيدر */
         .news-header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; }
-        .header-right { display: flex; align-items: center; gap: 20px; }
-        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
-        .back-btn:hover { background: var(--gold); color: var(--dark); }
+        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
 
-        .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
+        .main-container { display: flex; flex: 1; overflow: hidden; }
 
         /* القائمة الجانبية */
-        .news-sidebar { width: 250px; background: var(--white); border-left: 1px solid #ddd; display: flex; flex-direction: column; padding: 20px; gap: 12px; z-index: 50; }
-        .side-btn { width: 100%; padding: 12px; border: none; background: #f8f9fa; border-radius: 10px; cursor: pointer; text-align: right; font-weight: bold; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .news-sidebar { width: 250px; background: var(--white); border-left: 1px solid #ddd; display: flex; flex-direction: column; padding: 20px; gap: 12px; }
+        .side-btn { width: 100%; padding: 12px; border: none; background: #f8f9fa; border-radius: 10px; cursor: pointer; text-align: right; font-weight: bold; display: flex; align-items: center; gap: 10px; }
         .side-btn.active { background: var(--gold); color: var(--dark); }
 
         /* منطقة المحتوى */
-        .content-area { flex: 1; padding: 20px; overflow-y: auto; background: #f0f2f5; }
-        .news-card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-right: 6px solid var(--blue); position: relative; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .content-area { flex: 1; padding: 20px; overflow-y: auto; }
+        .news-card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-right: 6px solid var(--blue); position: relative; }
+        .news-card img { width: 100%; border-radius: 10px; margin-top: 15px; max-height: 400px; object-fit: contain; background: #f9f9f9; }
         
-        .news-card img { width: 100%; border-radius: 10px; margin-top: 15px; max-height: 500px; object-fit: contain; background: #f9f9f9; border: 1px solid #eee; }
-        .post-info { font-size: 12px; color: #888; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .del-btn { color: #e74c3c; cursor: pointer; }
+        .post-info { font-size: 12px; color: #888; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .del-btn { color: #e74c3c; cursor: pointer; font-size: 16px; margin-right: 10px; }
 
-        /* صندوق النشر للمالك */
-        .publisher-box { background: white; padding: 20px; border-radius: 15px; margin-top: 10px; border: 2px dashed var(--blue); }
-        #newsInput { width: 100%; height: 90px; padding: 12px; border-radius: 8px; border: 1px solid #ddd; resize: none; margin-bottom: 10px; font-size: 15px; }
-        .upload-row { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .upload-label { background: #eef2f7; color: var(--blue); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; border: 1px solid var(--blue); transition: 0.3s; }
-        .upload-label:hover { background: var(--blue); color: white; }
-        .send-btn { width: 100%; padding: 12px; background: var(--dark); color: var(--gold); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        /* صندوق النشر */
+        .publisher-box { background: white; padding: 20px; border-radius: 15px; margin-bottom: 25px; border: 2px dashed var(--blue); }
+        #newsInput { width: 100%; height: 80px; padding: 12px; border-radius: 8px; border: 1px solid #ddd; resize: none; margin-bottom: 10px; font-size: 14px; }
+        .upload-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .upload-label { background: #eef2f7; color: var(--blue); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; border: 1px solid var(--blue); }
+        .send-btn { width: 100%; padding: 12px; background: var(--dark); color: var(--gold); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-        @media (max-width: 768px) { .news-sidebar { display: none; } }
+        @media (max-width: 768px) { 
+            .news-sidebar { display: none; } 
+            .main-container { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
 
     <header class="news-header">
-        <div class="header-right">
-            <i class="fas fa-bars" style="color:var(--gold); cursor:pointer;"></i>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-newspaper" style="color:var(--gold); font-size: 24px;"></i>
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
         </div>
         <h2 id="pageTitle">الأخبار العامة</h2>
-        <div id="uNameDisplay" style="color: var(--gold); font-weight: bold;">جاري التحميل...</div>
+        <div id="uNameDisplay" style="color: var(--gold); font-weight: bold;">تحميل...</div>
     </header>
 
     <div class="main-container">
@@ -77,23 +61,23 @@ if (!sessionData) {
         </aside>
 
         <main class="content-area">
-            <div id="newsFeed"></div>
-
             <div id="adminPanel" style="display:none;" class="publisher-box">
-                <textarea id="newsInput" placeholder="اكتب تفاصيل الخبر الجديد هنا..."></textarea>
+                <textarea id="newsInput" placeholder="اكتب تفاصيل الخبر هنا..."></textarea>
                 <div class="upload-row">
-                    <label for="fileInput" class="upload-label"><i class="fas fa-image"></i> إرفاق صورة للخبر</label>
-                    <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="updateName()">
-                    <span id="fileName" style="font-size:12px; color:var(--blue); font-weight:bold;"></span>
+                    <label for="fileInput" class="upload-label"><i class="fas fa-image"></i> إرفاق صورة</label>
+                    <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="updateFileNameDisplay()">
+                    <span id="fileNameDisplay" style="font-size:12px; color:var(--blue);"></span>
                 </div>
-                <button id="sendBtn" class="send-btn" onclick="postNews()">نشر الخبر عبر السحابة</button>
+                <button id="sendBtn" class="send-btn" onclick="postNews()">نشر الخبر الآن</button>
             </div>
+
+            <div id="newsFeed"></div>
         </main>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4",
@@ -103,15 +87,23 @@ if (!sessionData) {
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const userData = JSON.parse(sessionStorage.getItem('paris_session'));
+        
+        // التبديل إلى localStorage لدعم الأندرويد
+        const userData = JSON.parse(localStorage.getItem('paris_session'));
         let currentTab = 'public';
 
-        if (!userData) window.location.href = 'login.html';
-        document.getElementById('uNameDisplay').innerText = userData.user;
+        if (!userData) {
+            window.location.replace('login.html');
+        } else {
+            document.getElementById('uNameDisplay').innerText = userData.user;
+            if (userData.rank === 'OWNER' || userData.rank === 'ADMIN') {
+                document.getElementById('adminPanel').style.display = 'block';
+            }
+        }
 
-        window.updateName = () => {
+        window.updateFileNameDisplay = () => {
             const file = document.getElementById('fileInput').files[0];
-            document.getElementById('fileName').innerText = file ? "✓ " + file.name : "";
+            document.getElementById('fileNameDisplay').innerText = file ? "✓ " + file.name : "";
         };
 
         window.setTab = (tab, btn) => {
@@ -122,11 +114,9 @@ if (!sessionData) {
             loadPosts();
         };
 
-        // دالة الرفع السحابي باستخدام مفتاحك الخاص (ImgBB)
         async function uploadToCloud(file) {
             const formData = new FormData();
             formData.append("image", file);
-            // تم دمج مفتاحك الخاص هنا بنجاح
             const res = await fetch("https://api.imgbb.com/1/upload?key=20682f31940285ce7cc779c7f1135c44", {
                 method: "POST",
                 body: formData
@@ -136,20 +126,23 @@ if (!sessionData) {
         }
 
         window.postNews = async () => {
-            const text = document.getElementById('newsInput').value;
+            const text = document.getElementById('newsInput').value.trim();
             const file = document.getElementById('fileInput').files[0];
             const btn = document.getElementById('sendBtn');
 
-            if (!text && !file) return alert("الرجاء كتابة نص الخبر أو اختيار صورة");
+            if (!text && !file) return alert("يرجى كتابة نص أو اختيار صورة");
 
             btn.disabled = true;
-            btn.innerText = "جاري الرفع للسحابة...";
+            btn.innerText = "جاري النشر...";
 
             let imageUrl = "";
             try {
                 if (file) imageUrl = await uploadToCloud(file);
                 
-                await set(ref(db, `news/${currentTab}/${Date.now()}`), {
+                const newsRef = ref(db, `news/${currentTab}`);
+                const newPostRef = push(newsRef);
+                
+                await set(newPostRef, {
                     text: text,
                     imageUrl: imageUrl,
                     author: userData.user,
@@ -158,13 +151,13 @@ if (!sessionData) {
                 
                 document.getElementById('newsInput').value = "";
                 document.getElementById('fileInput').value = "";
-                document.getElementById('fileName').innerText = "";
-                alert("تم نشر الخبر بنجاح!");
+                document.getElementById('fileNameDisplay').innerText = "";
+                alert("تم نشر الخبر بنجاح");
             } catch (e) {
-                alert("خطأ في الاتصال بالسحابة: " + e.message);
+                alert("فشل النشر: " + e.message);
             } finally {
                 btn.disabled = false;
-                btn.innerText = "نشر الخبر عبر السحابة";
+                btn.innerText = "نشر الخبر الآن";
             }
         };
 
@@ -177,25 +170,26 @@ if (!sessionData) {
                         const p = posts[id];
                         html += `
                             <div class="news-card">
-                                ${userData.rank === 'OWNER' ? `<i class="fas fa-trash del-btn" onclick="deletePost('${id}')"></i>` : ''}
                                 <div class="post-info">
                                     <span><i class="fas fa-user-circle"></i> ${p.author}</span>
-                                    <span>${p.date}</span>
+                                    <div>
+                                        <span>${p.date}</span>
+                                        ${(userData.rank === 'OWNER' || userData.rank === 'ADMIN') ? `<i class="fas fa-trash-alt del-btn" onclick="deletePost('${id}')"></i>` : ''}
+                                    </div>
                                 </div>
-                                <div style="font-weight:bold; font-size:16px; color:var(--dark); line-height:1.6;">${p.text}</div>
+                                <div style="font-size:15px; color:var(--dark); line-height:1.6; white-space: pre-wrap;">${p.text}</div>
                                 ${p.imageUrl ? `<img src="${p.imageUrl}" alt="خبر">` : ''}
                             </div>`;
                     });
                 } else {
-                    html = "<div style='text-align:center; padding:60px; opacity:0.4;'><i class='fas fa-folder-open fa-3x'></i><p>لا توجد أخبار حالياً في هذا القسم</p></div>";
+                    html = "<p style='text-align:center; padding:50px; opacity:0.5;'>لا توجد أخبار حالياً</p>";
                 }
                 document.getElementById('newsFeed').innerHTML = html;
             });
-            if (userData.rank === 'OWNER') document.getElementById('adminPanel').style.display = 'block';
         }
 
         window.deletePost = (id) => {
-            if (confirm("هل تريد حذف هذا الخبر من السحابة؟")) {
+            if (confirm("هل تريد حذف هذا الخبر؟")) {
                 remove(ref(db, `news/${currentTab}/${id}`));
             }
         };
@@ -204,4 +198,3 @@ if (!sessionData) {
     </script>
 </body>
 </html>
-
