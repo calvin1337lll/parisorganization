@@ -2,41 +2,105 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>سجن باريس الفيدرالي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجن باريس الفيدرالي | PARIS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: white; font-family: 'Cairo', sans-serif; padding: 20px; }
-        .prison-card { 
-            background: #0a0a0a; border: 1px solid #ff4757; border-radius: 10px; padding: 20px; 
-            max-width: 600px; margin: 20px auto; position: relative; overflow: hidden;
+        :root { --gold: #f1d279; --red: #ff4757; --dark: #000; --card-bg: #0a0a0a; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        
+        body { background-color: var(--dark); color: white; min-height: 100vh; padding-bottom: 50px; }
+
+        /* زر العودة الاحترافي */
+        .back-nav {
+            position: fixed; top: 20px; right: 20px; text-decoration: none;
+            color: var(--gold); display: flex; align-items: center; gap: 8px;
+            font-weight: bold; padding: 8px 18px; border: 1px solid var(--gold);
+            border-radius: 50px; transition: 0.3s; background: rgba(5, 10, 26, 0.9);
+            z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
-        .prison-card::before { content: 'PRISONER'; position: absolute; top: 10px; left: -30px; background: #ff4757; color: white; padding: 5px 40px; transform: rotate(-45deg); font-size: 10px; font-weight: bold; }
-        .prison-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #ff4757; margin-bottom: 15px; }
-        h2 { color: #ff4757; }
+        .back-nav:hover { background: var(--gold); color: black; box-shadow: 0 0 20px var(--gold); }
+
+        /* هيدر السجن المرعب */
+        .header { text-align: center; padding: 60px 20px; border-bottom: 2px solid var(--red); margin-bottom: 40px; background: #0a0000; }
+        .header i { font-size: 55px; color: var(--red); margin-bottom: 15px; filter: drop-shadow(0 0 10px #ff4757); }
+        .header h1 { font-size: 32px; color: white; text-transform: uppercase; letter-spacing: 2px; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+
+        /* كرت السجين الاحترافي */
+        .prison-card {
+            background: var(--card-bg); border: 1px solid #1a1a1a; border-radius: 15px;
+            margin-bottom: 25px; padding: 25px; position: relative; overflow: hidden;
+            border-right: 5px solid var(--red); transition: 0.4s;
+            display: flex; align-items: center; gap: 20px;
+        }
+        .prison-card:hover { transform: scale(1.02); background: #111; border-color: var(--red); }
+
+        /* تأثير الزوايا في السجن (أحمر) */
+        .prison-card::before, .prison-card::after {
+            content: ''; position: absolute; width: 25px; height: 25px; border: 2px solid var(--red); opacity: 0; transition: 0.4s;
+        }
+        .prison-card::before { top: 10px; left: 10px; border-bottom: 0; border-right: 0; }
+        .prison-card::after { bottom: 10px; right: 10px; border-top: 0; border-left: 0; }
+        .prison-card:hover::before, .prison-card:hover::after { opacity: 0.5; }
+
+        .prison-img { 
+            width: 110px; height: 110px; border-radius: 12px; object-fit: cover; 
+            border: 2px solid #333; filter: grayscale(50%); 
+        }
+        .prison-info { flex: 1; }
+        .prison-name { font-size: 20px; font-weight: bold; color: var(--red); margin-bottom: 8px; }
+        .prison-crime { color: #ccc; font-size: 15px; line-height: 1.6; }
+        .prison-time { font-size: 11px; color: #444; margin-top: 10px; display: block; }
+
+        .no-data { text-align: center; padding: 50px; color: #333; font-size: 18px; }
     </style>
 </head>
 <body>
-    <h1 style="text-align:center; color:#ff4757; margin-top:50px;"><i class="fas fa-lock"></i> قائمة السجناء والجرائم</h1>
-    <div id="prison-list"></div>
+
+    <a href="index.html" class="back-nav">
+        <i class="fas fa-arrow-right"></i>
+        <span>العودة للمدينة</span>
+    </a>
+
+    <header class="header">
+        <i class="fas fa-user-lock"></i>
+        <h1>نظام التوقيف والعدالة</h1>
+        <p style="color: #666; margin-top: 10px;">سجل المحكومين والإجراءات الانضباطية</p>
+    </header>
+
+    <div class="container" id="prison-list">
+        <div class="no-data">جاري فحص سجلات السجن...</div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        const db = getDatabase(initializeApp({apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com"}));
 
-        onValue(ref(db, 'prison'), (snap) => {
+        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        onValue(ref(db, 'prison'), (snapshot) => {
             const list = document.getElementById('prison-list');
             list.innerHTML = "";
-            snap.forEach(c => {
-                const d = c.val();
+            
+            if(!snapshot.exists()) {
+                list.innerHTML = "<div class='no-data'>السجن خالٍ من السجلات حالياً.</div>";
+                return;
+            }
+
+            snapshot.forEach(child => {
+                const data = child.val();
                 list.innerHTML += `
                     <div class="prison-card">
-                        <div style="display:flex; align-items:center; gap:20px;">
-                            ${d.image ? `<img src="${d.image}" class="prison-img">` : ''}
-                            <div>
-                                <h2>${d.title}</h2>
-                                <p style="color:#ccc;">${d.body}</p>
-                                <small style="color:#555;">التاريخ: ${d.time}</small>
-                            </div>
+                        ${data.image ? `<img src="${data.image}" class="prison-img">` : `<div class="prison-img" style="display:flex; align-items:center; justify-content:center; background:#1a1a1a;"><i class="fas fa-user-secret" style="font-size:40px; color:#333;"></i></div>`}
+                        <div class="prison-info">
+                            <div class="prison-name">${data.title}</div>
+                            <div class="prison-crime">${data.body}</div>
+                            <span class="prison-time">${data.time || ''}</span>
                         </div>
                     </div>`;
             });
