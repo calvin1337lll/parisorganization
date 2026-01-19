@@ -7,173 +7,96 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --dark: #0d1b3e; --gold: #f1d279; --orange: #f39c12; --danger: #e74c3c; --white: #ffffff; }
+        :root { --dark: #0d1b3e; --gold: #f1d279; --danger: #e74c3c; }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-        body { background: #1a1a1a; height: 100vh; overflow: hidden; display: flex; flex-direction: column; color: white; }
+        body { background: #1a1a1a; color: white; min-height: 100vh; transition: 0.3s; }
         
-        /* الهيدر */
-        .prison-header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        /* Dark Mode overrides (Prison is dark by default, but we ensure consistency) */
+        body.dark-mode { background: #0a0a0a; }
 
-        .main-container { display: flex; flex: 1; overflow: hidden; }
+        .prison-header { background: var(--dark); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); }
+        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; font-size: 14px; background: transparent; cursor: pointer; }
 
-        /* منطقة المحتوى */
-        .content-area { flex: 1; padding: 25px; overflow-y: auto; background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); }
+        .content-area { padding: 25px; max-width: 800px; margin: auto; }
+        .admin-prison-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; border: 1px solid var(--gold); margin-bottom: 30px; }
+        .prison-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .prison-inputs input { padding: 12px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; }
 
-        /* نموذج إضافة مسجون */
-        .admin-prison-box { background: rgba(255, 255, 255, 0.07); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 1px solid var(--gold); }
-        .prison-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .prison-inputs input { padding: 12px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; outline: none; width: 100%; }
-        .add-prisoner-btn { width: 100%; padding: 12px; background: var(--gold); color: var(--dark); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        .add-prisoner-btn:hover { background: #e0c060; }
-
-        /* كرت المسجون */
-        .prisoner-card { 
-            background: rgba(255, 255, 255, 0.08); 
-            border-right: 5px solid var(--danger); 
-            padding: 20px; 
-            border-radius: 12px; 
-            margin-bottom: 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .prisoner-info h3 { color: var(--gold); margin-bottom: 8px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
-        .prisoner-info p { font-size: 14px; color: #ddd; margin-bottom: 4px; }
-        
-        .timer-zone { text-align: center; background: rgba(0,0,0,0.4); padding: 10px 20px; border-radius: 10px; border: 1px solid #444; min-width: 120px; }
-        .timer-zone span { display: block; font-size: 11px; color: var(--gold); margin-bottom: 2px; }
-        .timer-zone b { font-size: 16px; color: white; }
-
-        .del-prisoner { color: var(--danger); cursor: pointer; font-size: 20px; margin-right: 20px; transition: 0.3s; }
-        .del-prisoner:hover { color: #ff6b6b; transform: scale(1.1); }
-
-        @media (max-width: 768px) { 
-            .prison-inputs { grid-template-columns: 1fr; } 
-            .prisoner-card { flex-direction: column; text-align: center; gap: 15px; }
-            .prisoner-info h3 { justify-content: center; }
-            .del-prisoner { margin: 10px 0 0 0; }
-        }
+        .prisoner-card { background: rgba(255, 255, 255, 0.1); border-right: 5px solid var(--danger); padding: 20px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .del-prisoner { color: var(--danger); cursor: pointer; font-size: 20px; }
     </style>
 </head>
 <body>
 
     <header class="prison-header">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <i class="fas fa-bars-staggered" style="color:var(--gold); font-size: 24px;"></i>
+        <div style="display:flex; gap:10px;">
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
+            <button onclick="toggleDarkMode()" class="back-btn"><i class="fas fa-moon"></i></button>
         </div>
         <h2>زنزانة باريس</h2>
-        <div id="uNameDisplay" style="color: var(--gold); font-weight: bold;">تحميل...</div>
+        <div id="uNameDisplay" style="color:var(--gold);">جاري التحميل...</div>
     </header>
 
-    <div class="main-container">
-        <main class="content-area">
-            
-            <div id="adminPanel" style="display:none;" class="admin-prison-box">
-                <h3 style="margin-bottom: 15px; color: var(--gold); font-size: 16px;"><i class="fas fa-user-plus"></i> إيداع مسجون جديد:</h3>
-                <div class="prison-inputs">
-                    <input type="text" id="pName" placeholder="اسم المسجون">
-                    <input type="text" id="pReason" placeholder="سبب العقوبة">
-                    <input type="text" id="pTime" placeholder="مدة السجن (مثلاً: 24 ساعة)">
-                </div>
-                <button class="add-prisoner-btn" onclick="addPrisoner()">تأفيذ الحكم الفوري</button>
+    <div class="content-area">
+        <div id="adminPanel" style="display:none;" class="admin-prison-box">
+            <div class="prison-inputs">
+                <input type="text" id="pName" placeholder="اسم المسجون">
+                <input type="text" id="pReason" placeholder="السبب">
+                <input type="text" id="pTime" placeholder="المدة">
             </div>
-
-            <div id="prisonList"></div>
-        </main>
+            <button onclick="addPrisoner()" style="width:100%; padding:12px; background:var(--gold); border:none; border-radius:10px; font-weight:bold; cursor:pointer;">إيداع في السجن</button>
+        </div>
+        <div id="prisonList"></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4",
-            databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com",
-            projectId: "webparis-ef921",
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // استخدام localStorage لضمان التوافق مع الأندرويد
         const userData = JSON.parse(localStorage.getItem('paris_session'));
+        if (!userData) window.location.href = 'login.html';
+        document.getElementById('uNameDisplay').innerText = userData.user;
 
-        if (!userData) {
-            window.location.replace('login.html');
-        } else {
-            document.getElementById('uNameDisplay').innerText = userData.user;
-            // السماح للمالك والآدمن بإدارة السجن
-            if (userData.rank === 'OWNER' || userData.rank === 'ADMIN') {
-                document.getElementById('adminPanel').style.display = 'block';
-            }
-        }
+        window.toggleDarkMode = () => {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('paris_theme', isDark ? 'dark' : 'light');
+        };
+        if (localStorage.getItem('paris_theme') === 'dark') document.body.classList.add('dark-mode');
+
+        if (userData.rank === 'OWNER' || userData.rank === 'ADMIN') document.getElementById('adminPanel').style.display = 'block';
 
         window.addPrisoner = async () => {
-            const name = document.getElementById('pName').value.trim();
-            const reason = document.getElementById('pReason').value.trim();
-            const time = document.getElementById('pTime').value.trim();
-
-            if (!name || !reason || !time) return alert("يرجى إكمال بيانات الحكم");
-
-            const prisonRef = ref(db, 'prison/list');
-            const newPrisonerRef = push(prisonRef);
-            
-            await set(newPrisonerRef, {
-                name: name,
-                reason: reason,
-                duration: time,
-                addedBy: userData.user,
-                date: new Date().toLocaleString('ar-EG')
-            });
-
-            alert("تم إيداع المسجون بنجاح");
-            document.getElementById('pName').value = "";
-            document.getElementById('pReason').value = "";
-            document.getElementById('pTime').value = "";
+            const name = document.getElementById('pName').value;
+            const res = document.getElementById('pReason').value;
+            const time = document.getElementById('pTime').value;
+            if(!name || !res || !time) return alert("أكمل البيانات");
+            await set(push(ref(db, 'prison/list')), { name, reason: res, duration: time, addedBy: userData.user, date: new Date().toLocaleString() });
+            location.reload();
         };
 
-        function loadPrisoners() {
-            onValue(ref(db, 'prison/list'), (snap) => {
-                let html = "";
-                const data = snap.val();
-                if (data) {
-                    Object.keys(data).reverse().forEach(id => {
-                        const p = data[id];
-                        html += `
-                            <div class="prisoner-card">
-                                <div class="prisoner-info">
-                                    <h3><i class="fas fa-user-lock"></i> ${p.name}</h3>
-                                    <p><b>الجريمة:</b> ${p.reason}</p>
-                                    <p style="font-size:12px; opacity:0.6;"><i class="fas fa-gavel"></i> بواسطة: ${p.addedBy} • ${p.date}</p>
-                                </div>
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <div class="timer-zone">
-                                        <span>مدة الحكم</span>
-                                        <b>${p.duration}</b>
-                                    </div>
-                                    ${(userData.rank === 'OWNER' || userData.rank === 'ADMIN') ? 
-                                    `<i class="fas fa-unlock-alt del-prisoner" title="إخلاء سبيل" onclick="release('${id}')"></i>` : ''}
-                                </div>
-                            </div>`;
-                    });
-                } else {
-                    html = "<div style='text-align:center; padding:50px; opacity:0.3;'><i class='fas fa-door-open fa-3x'></i><p style='margin-top:15px;'>السجن فارغ حالياً</p></div>";
-                }
-                document.getElementById('prisonList').innerHTML = html;
-            });
-        }
-
-        window.release = (id) => {
-            if (confirm("هل تريد إخلاء سبيل هذا المسجون؟")) {
-                remove(ref(db, `prison/list/${id}`));
+        onValue(ref(db, 'prison/list'), (snap) => {
+            let html = "";
+            const data = snap.val();
+            if (data) {
+                Object.keys(data).forEach(id => {
+                    const p = data[id];
+                    html += `<div class="prisoner-card">
+                        <div>
+                            <h3 style="color:var(--gold)">${p.name}</h3>
+                            <p style="font-size:13px; color:#ccc;">${p.reason} | المدة: ${p.duration}</p>
+                        </div>
+                        ${(userData.rank === 'OWNER' || userData.rank === 'ADMIN') ? `<i class="fas fa-unlock del-prisoner" onclick="release('${id}')"></i>` : ''}
+                    </div>`;
+                });
             }
-        };
+            document.getElementById('prisonList').innerHTML = html;
+        });
 
-        loadPrisoners();
+        window.release = (id) => { if(confirm("إخلاء سبيل؟")) remove(ref(db, `prison/list/${id}`)); };
     </script>
 </body>
 </html>
