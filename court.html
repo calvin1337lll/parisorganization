@@ -2,35 +2,98 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>محكمة باريس العليا</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محكمة باريس العليا | PARIS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: white; font-family: 'Cairo', sans-serif; padding: 20px; }
-        .gavel-icon { font-size: 50px; color: var(--gold); text-align: center; display: block; margin: 30px 0; }
-        .case-box { background: #111; border-right: 5px solid #f1d279; padding: 20px; max-width: 700px; margin: 15px auto; border-radius: 5px; }
-        h3 { color: #f1d279; margin-bottom: 10px; }
+        :root { --gold: #f1d279; --dark: #000; --card-bg: #0a0a0a; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        
+        body { background-color: var(--dark); color: white; min-height: 100vh; padding-bottom: 50px; }
+
+        /* زر العودة الاحترافي */
+        .back-nav {
+            position: fixed; top: 20px; right: 20px; text-decoration: none;
+            color: var(--gold); display: flex; align-items: center; gap: 8px;
+            font-weight: bold; padding: 8px 18px; border: 1px solid var(--gold);
+            border-radius: 50px; transition: 0.3s; background: rgba(5, 10, 26, 0.9);
+            z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .back-nav:hover { background: var(--gold); color: black; box-shadow: 0 0 20px var(--gold); }
+
+        .header { text-align: center; padding: 60px 20px; border-bottom: 2px solid var(--gold); margin-bottom: 40px; background: #050a1a; }
+        .header i { font-size: 50px; color: var(--gold); margin-bottom: 15px; }
+        .header h1 { font-size: 32px; color: var(--gold); }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+
+        /* كرت القضية / الحكم */
+        .case-card {
+            background: var(--card-bg); border: 1px solid #1a1a1a; border-radius: 15px;
+            margin-bottom: 25px; padding: 25px; position: relative; overflow: hidden;
+            border-right: 5px solid var(--gold); transition: 0.4s;
+        }
+        .case-card:hover { transform: scale(1.02); background: #111; }
+
+        /* تأثير الزوايا الذهبية */
+        .case-card::before, .case-card::after {
+            content: ''; position: absolute; width: 25px; height: 25px; border: 2px solid var(--gold); opacity: 0; transition: 0.4s;
+        }
+        .case-card::before { top: 10px; left: 10px; border-bottom: 0; border-right: 0; }
+        .case-card::after { bottom: 10px; right: 10px; border-top: 0; border-left: 0; }
+        .case-card:hover::before, .case-card:hover::after { opacity: 0.5; }
+
+        .case-title { font-size: 22px; font-weight: bold; color: var(--gold); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .case-body { color: #ccc; line-height: 1.7; font-size: 16px; }
+        .case-img { width: 100%; border-radius: 10px; margin-top: 15px; border: 1px solid #333; }
+        .case-time { font-size: 12px; color: #444; margin-top: 15px; display: block; text-align: left; }
+
+        .no-data { text-align: center; padding: 50px; color: #444; font-size: 18px; }
     </style>
 </head>
 <body>
-    <i class="fas fa-gavel gavel-icon"></i>
-    <h1 style="text-align:center;">ميزان العدالة</h1>
-    <div id="court-cases"></div>
+
+    <a href="index.html" class="back-nav">
+        <i class="fas fa-arrow-right"></i>
+        <span>العودة للمدينة</span>
+    </a>
+
+    <header class="header">
+        <i class="fas fa-gavel"></i>
+        <h1>محكمة باريس العليا</h1>
+        <p style="color: #666; margin-top: 10px;">العدل أساس الملك - سجل الأحكام والقضايا الرسمية</p>
+    </header>
+
+    <div class="container" id="court-list">
+        <div class="no-data">جاري تحميل سجلات المحكمة...</div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        const db = getDatabase(initializeApp({apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com"}));
 
-        onValue(ref(db, 'court'), (snap) => {
-            const list = document.getElementById('court-cases');
+        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        onValue(ref(db, 'court'), (snapshot) => {
+            const list = document.getElementById('court-list');
             list.innerHTML = "";
-            snap.forEach(c => {
-                const d = c.val();
+            
+            if(!snapshot.exists()) {
+                list.innerHTML = "<div class='no-data'>لا توجد أحكام أو قضايا مسجلة حالياً.</div>";
+                return;
+            }
+
+            snapshot.forEach(child => {
+                const data = child.val();
                 list.innerHTML += `
-                    <div class="case-box">
-                        <h3><i class="fas fa-balance-scale"></i> ${d.title}</h3>
-                        <p>${d.body}</p>
-                        ${d.image ? `<img src="${d.image}" style="width:100%; border-radius:10px; margin-top:10px;">` : ''}
-                        <div style="text-align:left; font-size:12px; color:#444; margin-top:10px;">${d.time}</div>
+                    <div class="case-card">
+                        <div class="case-title"><i class="fas fa-balance-scale"></i> ${data.title}</div>
+                        <div class="case-body">${data.body}</div>
+                        ${data.image ? `<img src="${data.image}" class="case-img">` : ''}
+                        <span class="case-time">${data.time || ''}</span>
                     </div>`;
             });
         });
