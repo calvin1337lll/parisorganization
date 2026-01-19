@@ -2,94 +2,160 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة الإدارة | PARIS</title>
+    <title>مركز التحكم المطور | PARIS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --gold: #f1d279; --dark: #000; }
-        body { background: var(--dark); color: white; font-family: 'Cairo', sans-serif; padding: 20px; }
-        .admin-wrapper { max-width: 600px; margin: 50px auto; }
+        :root { --gold: #f1d279; --red: #ff4757; --dark: #000; --bg-card: #0a0a0a; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--dark); color: white; padding: 20px; }
+        
+        .container { max-width: 900px; margin: auto; }
         .admin-box { 
-            background: #0a0a0a; padding: 30px; border-radius: 20px; 
-            border: 1px solid #1a1a1a; margin-bottom: 25px;
-            position: relative; border-top: 3px solid var(--gold);
+            background: var(--bg-card); padding: 25px; border-radius: 15px; 
+            border: 1px solid #1a1a1a; margin-bottom: 30px; position: relative;
+            border-top: 3px solid var(--gold);
         }
-        .admin-box::before, .admin-box::after {
-            content: ''; position: absolute; width: 20px; height: 20px; border: 2px solid var(--gold);
-        }
-        .admin-box::before { top: 10px; right: 10px; border-bottom: 0; border-left: 0; }
-        .admin-box::after { bottom: 10px; left: 10px; border-top: 0; border-right: 0; }
-        h2 { color: var(--gold); text-align: center; margin-bottom: 20px; }
-        input, textarea, select { 
-            width: 100%; padding: 12px; margin: 10px 0; background: #000; 
-            border: 1px solid #333; color: white; border-radius: 10px; text-align: center;
-        }
-        button { 
-            width: 100%; padding: 12px; background: var(--gold); color: black; 
-            font-weight: bold; border: none; border-radius: 10px; cursor: pointer;
-        }
-        #ownerOnly { display: none; border-top-color: #ff4757; }
+
+        h2 { color: var(--gold); margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: white; border-radius: 8px; }
+        button { width: 100%; padding: 12px; background: var(--gold); color: black; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        button:hover { filter: brightness(1.2); }
+
+        /* ستايل الجداول والقوائم */
+        .list-item { background: #000; padding: 15px; border-radius: 10px; border: 1px solid #222; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-del { width: auto; background: var(--red); color: white; padding: 5px 15px; font-size: 13px; }
+        
+        /* سجل الإدارة */
+        .log-item { font-size: 13px; padding: 8px; border-bottom: 1px solid #1a1a1a; color: #aaa; }
+        .log-user { color: var(--gold); font-weight: bold; }
+        .log-action { color: #fff; }
+
+        #ownerSection { display: none; border-top-color: var(--red); }
     </style>
 </head>
 <body>
 
-    <div class="admin-wrapper">
-        <div class="admin-box">
-            <h2><i class="fas fa-edit"></i> نظام النشر الموحد</h2>
-            <select id="pubType">
-                <option value="news">الصحيفة (الأخبار)</option>
-                <option value="market">المتجر (المنتجات)</option>
-                <option value="bank">البنك المركزي (بيانات مالية)</option> <option value="prison">السجن (قائمة السجناء)</option>
-                <option value="court">المحكمة (الأحكام)</option>
-                <option value="notifications">تنبيه عام (الشاشة الرئيسية)</option>
-            </select>
-            <input type="text" id="pTitle" placeholder="العنوان">
-            <textarea id="pBody" placeholder="التفاصيل..." rows="3"></textarea>
-            <input type="text" id="pImg" placeholder="رابط الصورة (اختياري)">
-            <button onclick="publishData()">نشر الآن</button>
-        </div>
+<div class="container">
+    <h1 style="text-align: center; margin-bottom: 30px; color: var(--gold);">نظام إدارة مدينة باريس</h1>
 
-        <div id="ownerOnly" class="admin-box">
-            <h2 style="color: #ff4757;"><i class="fas fa-crown"></i> إدارة الرتب</h2>
-            <input type="text" id="searchUser" placeholder="اسم المستخدم">
-            <button onclick="manageRank('ADMIN')">ترقية لآدمن</button>
-            <button onclick="manageRank('USER')" style="background:#ff4757; color:white; margin-top:5px;">تنزيل لمواطن</button>
+    <div class="admin-box">
+        <h2><i class="fas fa-plus-circle"></i> إضافة منشور جديد</h2>
+        <select id="targetSec">
+            <option value="news">الصحيفة</option>
+            <option value="market">المتجر</option>
+            <option value="bank">البنك</option>
+            <option value="prison">السجن</option>
+            <option value="court">المحكمة</option>
+        </select>
+        <input type="text" id="pTitle" placeholder="العنوان">
+        <textarea id="pBody" placeholder="التفاصيل..." rows="3"></textarea>
+        <button onclick="handlePublish()">نشر وتوثيق</button>
+    </div>
+
+    <div class="admin-box" style="border-top-color: #2ecc71;">
+        <h2><i class="fas fa-history"></i> سجل نشاط الإدارة</h2>
+        <div id="adminLogs" style="max-height: 200px; overflow-y: auto;">
+            <p style="text-align:center; color:#444;">جاري جلب السجلات...</p>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <div class="admin-box">
+        <h2><i class="fas fa-trash-alt"></i> إدارة المنشورات الحالية</h2>
+        <select id="viewSec" onchange="loadPosts()">
+            <option value="news">عرض منشورات الصحيفة</option>
+            <option value="market">عرض منشورات المتجر</option>
+            <option value="bank">عرض منشورات البنك</option>
+            <option value="prison">عرض منشورات السجن</option>
+            <option value="court">عرض منشورات المحكمة</option>
+        </select>
+        <div id="postsList" style="margin-top: 20px;"></div>
+    </div>
 
-        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+    <div id="ownerSection" class="admin-box">
+        <h2><i class="fas fa-crown"></i> رتب الإدارة</h2>
+        <input type="text" id="targetUser" placeholder="اسم المستخدم">
+        <button onclick="changeRank('ADMIN')">رفع لرتبة آدمن</button>
+    </div>
+</div>
 
-        const session = JSON.parse(localStorage.getItem('paris_session'));
-        if(session && session.rank === 'OWNER') document.getElementById('ownerOnly').style.display = 'block';
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        window.publishData = async () => {
-            const type = document.getElementById('pubType').value;
-            const data = {
-                title: document.getElementById('pTitle').value,
-                body: document.getElementById('pBody').value,
-                message: document.getElementById('pBody').value,
-                image: document.getElementById('pImg').value,
-                time: new Date().toLocaleString('ar-EG')
-            };
-            await push(ref(db, type), data);
-            alert("تم النشر في قسم " + type);
-        };
+    const config = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" };
+    const app = initializeApp(config);
+    const db = getDatabase(app);
 
-        window.manageRank = async (newRank) => {
-            const targetName = document.getElementById('searchUser').value;
-            const snap = await get(ref(db, 'users'));
-            let foundKey = null;
-            snap.forEach(u => { if(u.val().user === targetName) foundKey = u.key; });
-            if(foundKey) {
-                await update(ref(db, `users/${foundKey}`), { rank: newRank });
-                alert("تم التحديث!");
-            } else alert("غير موجود");
-        };
-    </script>
+    // الحصول على بيانات المستخدم الحالي من الجلسة
+    const session = JSON.parse(localStorage.getItem('paris_session')) || { user: "مجهول", rank: "USER" };
+    if(session.rank === 'OWNER') document.getElementById('ownerSection').style.display = 'block';
+
+    // وظيفة توثيق السجل
+    const writeLog = (action) => {
+        push(ref(db, 'admin_logs'), {
+            user: session.user,
+            action: action,
+            time: new Date().toLocaleString('ar-EG')
+        });
+    };
+
+    // 1. النشر
+    window.handlePublish = async () => {
+        const sec = document.getElementById('targetSec').value;
+        const title = document.getElementById('pTitle').value;
+        if(!title) return alert("أدخل العنوان");
+
+        await push(ref(db, sec), {
+            title: title,
+            body: document.getElementById('pBody').value,
+            time: new Date().toLocaleString('ar-EG'),
+            author: session.user
+        });
+
+        writeLog(`قام بنشر خبر جديد في قسم [${sec}] بعنوان: ${title}`);
+        alert("تم النشر وتوثيق العملية");
+        location.reload();
+    };
+
+    // 2. جلب سجل النشاط
+    onValue(ref(db, 'admin_logs'), (snap) => {
+        const logDiv = document.getElementById('adminLogs');
+        logDiv.innerHTML = "";
+        let logs = [];
+        snap.forEach(c => { logs.push(c.val()); });
+        logs.reverse().forEach(l => {
+            logDiv.innerHTML += `<div class="log-item">
+                [${l.time}] <span class="log-user">${l.user}</span>: <span class="log-action">${l.action}</span>
+            </div>`;
+        });
+    });
+
+    // 3. جلب المنشورات للحذف
+    window.loadPosts = () => {
+        const sec = document.getElementById('viewSec').value;
+        onValue(ref(db, sec), (snap) => {
+            const list = document.getElementById('postsList');
+            list.innerHTML = "";
+            snap.forEach(c => {
+                const p = c.val();
+                list.innerHTML += `<div class="list-item">
+                    <span>${p.title}</span>
+                    <button class="btn-del" onclick="handleDelete('${sec}', '${c.key}', '${p.title}')">حذف</button>
+                </div>`;
+            });
+        });
+    };
+    loadPosts(); // تحميل أولي
+
+    // 4. الحذف
+    window.handleDelete = async (sec, id, title) => {
+        if(confirm(`هل تريد حذف: ${title}؟`)) {
+            await remove(ref(db, `${sec}/${id}`));
+            writeLog(`قام بحذف منشور من قسم [${sec}] كان بعنوان: ${title}`);
+            alert("تم الحذف وتوثيق العملية");
+        }
+    };
+
+</script>
 </body>
 </html>
