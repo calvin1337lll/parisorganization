@@ -7,68 +7,62 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #f4f7f6; --text: #0d1b3e; --gold: #f1d279; --dark: #0d1b3e; }
-        [data-theme="dark"] { --bg: #0a0b10; --text: #e1e1e1; }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        :root { --bg: #f4f7f6; --card: #ffffff; --text: #0d1b3e; --gold: #f1d279; --dark: #0d1b3e; }
+        [data-theme="dark"] { --bg: #0a0b10; --card: #15161c; --text: #e1e1e1; --dark: #1c1d26; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; transition: 0.3s; }
         body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* الهيدر */
-        .header { background: var(--dark); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
         
-        /* الخريطة - تصميم مرن للجوال */
-        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
-        .map-grid { 
-            position: relative; width: 320px; height: 320px; transform: rotate(45deg); 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; 
-        }
-        .box { 
-            background: white; border-radius: 15px; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
-        }
-        .box i, .box span { transform: rotate(-45deg); font-weight: bold; }
-        .bank-center { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); 
-            width: 80px; height: 80px; background: var(--dark); border-radius: 50%; color: var(--gold); 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
-        }
+        /* وضع الدارك مود في الزاوية */
+        .theme-btn { position: absolute; top: 10px; right: 10px; background: var(--card); border: 1px solid var(--gold); color: var(--gold); width: 40px; height: 40px; border-radius: 10px; cursor: pointer; }
 
-        @media (max-width: 480px) {
-            .map-grid { width: 260px; height: 260px; }
-            .bank-center { width: 70px; height: 70px; }
-        }
+        .map-container { position: relative; width: 320px; height: 320px; transform: rotate(45deg); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .box { background: var(--card); border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .box i, .box span { transform: rotate(-45deg); font-weight: bold; }
+        .center-bank { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); width: 85px; height: 85px; background: var(--dark); border-radius: 50%; color: var(--gold); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border: 4px solid var(--bg); }
+
+        @media (max-width: 480px) { .map-container { width: 280px; height: 280px; } .org-name { font-size: 22px !important; } }
     </style>
 </head>
 <body>
     <header class="header">
-        <div id="userInfo">تحميل...</div>
-        <button onclick="logout()" style="background:none; border:none; color:#ff6b6b; cursor:pointer;">خروج</button>
+        <div id="userDisplay">جاري التحميل...</div>
+        <div style="display:flex; gap:15px;">
+            <div id="adminBtn" style="display:none; cursor:pointer; color:var(--gold);" onclick="location.href='admin.html'"><i class="fa fa-user-shield"></i></div>
+            <div onclick="logout()" style="cursor:pointer; color:#ff6b6b;"><i class="fa fa-sign-out-alt"></i></div>
+        </div>
     </header>
 
-    <main class="main-content">
-        <div style="position:absolute; top:20px; font-weight:bold; font-size:24px;">منظمة باريس</div>
-        <div class="map-grid">
-            <div class="box" onclick="location.href='market.html'"><i class="fa fa-shopping-cart"></i><span>المتجر</span></div>
-            <div class="box" onclick="location.href='court.html'"><i class="fa fa-gavel"></i><span>المحكمة</span></div>
-            <div class="box" onclick="location.href='news.html'"><i class="fa fa-bullhorn"></i><span>الأخبار</span></div>
-            <div class="box" onclick="location.href='prison.html'"><i class="fa fa-lock"></i><span>السجن</span></div>
-            <div class="bank-center" onclick="location.href='bank.html'"><i class="fa fa-university"></i><span>البنك</span></div>
+    <main class="main">
+        <button class="theme-btn" onclick="toggleMode()"><i id="tIcon" class="fa fa-moon"></i></button>
+        <div class="org-name" style="position:absolute; top:30px; font-weight:bold; font-size:28px;">منظمة باريس</div>
+        
+        <div class="map-container">
+            <div class="box" style="color:#e67e22;" onclick="location.href='market.html'"><i class="fa fa-shopping-cart"></i><span>المتجر</span></div>
+            <div class="box" style="color:#3498db;" onclick="location.href='court.html'"><i class="fa fa-gavel"></i><span>المحكمة</span></div>
+            <div class="box" style="color:#9b59b6;" onclick="location.href='news.html'"><i class="fa fa-newspaper"></i><span>الأخبار</span></div>
+            <div class="box" style="color:#2ecc71;" onclick="location.href='prison.html'"><i class="fa fa-lock"></i><span>السجن</span></div>
+            <div class="center-bank" onclick="location.href='bank.html'"><i class="fa fa-university"></i><span style="font-size:10px;">البنك</span></div>
         </div>
     </main>
 
     <script>
-        // التحقق من الجلسة ومنع التحديث التلقائي
-        const sessionData = localStorage.getItem('paris_session');
-        if (!sessionData) {
-            window.location.replace('login.html');
-        } else {
-            const user = JSON.parse(sessionData);
-            document.getElementById('userInfo').innerText = user.user + " | " + (user.rank === 'OWNER' ? 'المالك' : 'عضو');
+        const session = JSON.parse(localStorage.getItem('paris_session'));
+        if (!session) { window.location.replace('login.html'); }
+        else {
+            document.getElementById('userDisplay').innerText = session.user + " | " + (session.rank === 'OWNER' ? 'المالك' : (session.rank === 'ADMIN' ? 'مسؤول' : 'عضو'));
+            if(session.rank === 'OWNER' || session.rank === 'ADMIN') document.getElementById('adminBtn').style.display = 'block';
         }
 
-        function logout() {
-            localStorage.clear();
-            window.location.replace('login.html');
+        function toggleMode() {
+            const b = document.body; const i = document.getElementById('tIcon');
+            if(b.hasAttribute('data-theme')) { b.removeAttribute('data-theme'); i.className='fa fa-moon'; localStorage.setItem('mode','light'); }
+            else { b.setAttribute('data-theme','dark'); i.className='fa fa-sun'; localStorage.setItem('mode','dark'); }
         }
+        if(localStorage.getItem('mode')==='dark') toggleMode();
+        function logout() { localStorage.clear(); window.location.replace('login.html'); }
     </script>
 </body>
 </html>
