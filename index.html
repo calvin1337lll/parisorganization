@@ -3,153 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مدينة باريس | PARIS</title>
+    <title>PARIS | مدينة باريس</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #f1d279; --dark: #000; --nav-bg: #050a1a; }
-        
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-        
-        body { 
-            background: var(--dark); 
-            color: white; 
-            overflow-x: hidden;
+        :root {
+            --gold: #f1d279;
+            --dark-blue: #050a1a;
+            --black: #000;
+            --soft-gold: rgba(241, 210, 121, 0.1);
         }
 
-        /* الهيدر العلوي */
-        .navbar { 
-            background: var(--nav-bg); 
-            padding: 15px; 
-            display: flex; 
-            justify-content: center; 
-            flex-wrap: wrap; 
-            gap: 15px; 
-            border-bottom: 2px solid var(--gold);
-            position: sticky; top: 0; z-index: 1000;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
         }
-        .nav-link { color: #fff; text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; }
-        .nav-link:hover { color: var(--gold); }
 
-        /* التصميم الغامض الرئيسي */
-        .main-wrapper {
-            min-height: 90vh;
+        body {
+            background-color: var(--black);
+            color: white;
+            height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- الشريط العلوي المرتب --- */
+        .top-bar {
+            background: var(--dark-blue);
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: radial-gradient(circle, #0a1329 0%, #000 100%);
+            border-bottom: 1px solid var(--gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 100;
         }
 
-        /* أيقونة البنك الكبيرة في المنتصف كما طلبت */
-        .central-bank-icon {
-            text-align: center;
-            margin-bottom: 30px;
-            cursor: pointer;
-            transition: 0.5s;
-        }
-        .central-bank-icon i {
-            font-size: 100px;
+        .brand {
+            font-size: 22px;
+            font-weight: bold;
             color: var(--gold);
-            filter: drop-shadow(0 0 20px rgba(241, 210, 121, 0.5));
-        }
-        .central-bank-icon:hover { transform: scale(1.1); }
-
-        h1 { font-size: 30px; letter-spacing: 3px; margin-bottom: 10px; color: #fff; text-transform: uppercase; }
-        .user-welcome { color: var(--gold); font-size: 18px; margin-bottom: 40px; }
-
-        /* شبكة الأيقونات الغامضة */
-        .grid-menu {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 500px;
-            width: 100%;
+            letter-spacing: 2px;
         }
 
-        .menu-item {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid #1a1a1a;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
+        .logout-btn {
+            background: rgba(255, 63, 63, 0.1);
+            color: #ff3f3f;
+            border: 1px solid #ff3f3f;
+            padding: 6px 18px;
+            border-radius: 5px;
             text-decoration: none;
-            color: #fff;
-            transition: 0.4s;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .logout-btn:hover { background: #ff3f3f; color: white; }
+
+        /* --- توزيع المربعات الاحترافي --- */
+        .city-grid {
+            flex: 1;
+            display: grid;
+            grid-template-areas: 
+                ". news ."
+                "court bank market"
+                ". prison .";
+            justify-content: center;
+            align-content: center;
+            gap: 25px;
             position: relative;
         }
-        .menu-item i { font-size: 25px; margin-bottom: 10px; display: block; color: var(--gold); }
-        .menu-item span { font-size: 12px; font-weight: bold; }
 
-        /* تأثير الزوايا الذهبية عند اللمس */
-        .menu-item:hover { background: #050a1a; border-color: var(--gold); transform: translateY(-5px); }
-        
-        #adminBtn { 
-            display: none; grid-column: span 3; border: 1px solid var(--gold); background: rgba(241, 210, 121, 0.05);
-            margin-top: 10px;
+        /* ستايل المربع المشترك */
+        .box {
+            width: 130px;
+            height: 130px;
+            background: #0a0a0a;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            position: relative;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #1a1a1a;
         }
+
+        /* تأثير الزوايا الذهبية كما في الصورة */
+        .box::before, .box::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gold);
+            opacity: 0.6;
+        }
+        .box::before { top: 8px; right: 8px; border-bottom: 0; border-left: 0; }
+        .box::after { bottom: 8px; left: 8px; border-top: 0; border-right: 0; }
+
+        .box i { font-size: 30px; margin-bottom: 12px; transition: 0.3s; }
+        .box span { font-size: 14px; font-weight: bold; }
+
+        /* تمييز مربع البنك (المركز) */
+        .box.bank {
+            grid-area: bank;
+            background: var(--gold);
+            color: black;
+            width: 150px;
+            height: 150px;
+            box-shadow: 0 0 30px rgba(241, 210, 121, 0.3);
+            border: none;
+        }
+        .box.bank i { font-size: 45px; color: black; }
+        .box.bank::before, .box.bank::after { border-color: black; }
+
+        /* توزيع الأقسام */
+        .news { grid-area: news; }
+        .market { grid-area: market; }
+        .court { grid-area: court; }
+        .prison { grid-area: prison; }
+
+        /* تأثير الحوم (Hover) */
+        .box:hover {
+            transform: scale(1.08);
+            border-color: var(--gold);
+            box-shadow: 0 0 20px var(--soft-gold);
+            z-index: 5;
+        }
+
+        /* --- زر الإدارة الاحترافي --- */
+        .admin-wrapper {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        #adminBtn {
+            display: none; /* يظهر بالسكريبت */
+            background: var(--dark-blue);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 10px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            gap: 10px;
+            align-items: center;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+        #adminBtn:hover { background: var(--gold); color: black; box-shadow: 0 0 20px var(--gold); }
 
         /* الجوال */
         @media (max-width: 500px) {
-            .grid-menu { grid-template-columns: repeat(2, 1fr); }
-            #adminBtn { grid-column: span 2; }
-            .central-bank-icon i { font-size: 80px; }
+            .box { width: 100px; height: 100px; }
+            .box.bank { width: 110px; height: 110px; }
+            .city-grid { gap: 15px; }
+            .box i { font-size: 24px; }
+            .box span { font-size: 12px; }
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="index.html" class="nav-link">الرئيسية</a>
-        <a href="news.html" class="nav-link">الصحيفة</a>
-        <a href="market.html" class="nav-link">المتجر</a>
-        <a href="#" onclick="logout()" class="nav-link" style="color: #ff4757;">تسجيل الخروج</a>
-    </nav>
+    <header class="top-bar">
+        <a href="#" onclick="logout()" class="logout-btn">خروج</a>
+        <div class="brand">PARIS</div>
+    </header>
 
-    <div class="main-wrapper">
-        <a href="bank.html" class="central-bank-icon">
-            <i class="fas fa-university"></i>
+    <main class="city-grid">
+        <a href="news.html" class="box news">
+            <i class="fas fa-newspaper"></i>
+            <span>الأخبار</span>
         </a>
-        
-        <h1 id="cityName">PARIS CITY</h1>
-        <div class="user-welcome" id="userTag">مرحباً بك</div>
 
-        <div class="grid-menu">
-            <a href="news.html" class="menu-item">
-                <i class="fas fa-newspaper"></i>
-                <span>الصحيفة</span>
-            </a>
-            <a href="market.html" class="menu-item">
-                <i class="fas fa-shopping-bag"></i>
-                <span>المتجر</span>
-            </a>
-            <a href="court.html" class="menu-item">
-                <i class="fas fa-gavel"></i>
-                <span>المحكمة</span>
-            </a>
-            <a href="prison.html" class="menu-item">
-                <i class="fas fa-user-lock"></i>
-                <span>السجن</span>
-            </a>
-            <a href="admin.html" id="adminBtn" class="menu-item">
-                <i class="fas fa-user-shield"></i>
-                <span>لوحة التحكم الإدارية</span>
-            </a>
-        </div>
+        <a href="court.html" class="box court">
+            <i class="fas fa-gavel"></i>
+            <span>المحكمة</span>
+        </a>
+
+        <a href="bank.html" class="box bank">
+            <i class="fas fa-university"></i>
+            <span>البنك</span>
+        </a>
+
+        <a href="market.html" class="box market">
+            <i class="fas fa-shopping-cart"></i>
+            <span>المتجر</span>
+        </a>
+
+        <a href="prison.html" class="box prison">
+            <i class="fas fa-lock"></i>
+            <span>السجن</span>
+        </a>
+    </main>
+
+    <div class="admin-wrapper">
+        <a href="admin.html" id="adminBtn">
+            <i class="fas fa-user-shield"></i>
+            مركز الإدارة
+        </a>
     </div>
 
     <script type="module">
-        // التحقق من الحماية
+        // التحقق من الجلسة
         const session = JSON.parse(localStorage.getItem('paris_session'));
+
         if (!session) {
-            window.location.href = "login.html"; 
+            window.location.href = "login.html";
         } else {
-            document.getElementById('userTag').innerText = "المواطن: " + session.user;
-            
-            // إظهار الإدارة للأونر والآدمن
+            // إظهار زر الإدارة للأونر والآدمن فقط
             if (session.rank === 'OWNER' || session.rank === 'ADMIN') {
-                document.getElementById('adminBtn').style.display = 'block';
+                const btn = document.getElementById('adminBtn');
+                btn.style.display = 'flex';
             }
         }
 
