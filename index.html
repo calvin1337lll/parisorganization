@@ -3,159 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منظمة باريس | Paris Org</title>
-    
+    <title>الرئيسية - منظمة باريس</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --bg: #f4f7f6; --card: #ffffff; --text: #0d1b3e; --gold: #f1d279; --dark: #0d1b3e;
-        }
-        [data-theme="dark"] {
-            --bg: #0a0b10; --card: #15161c; --text: #e1e1e1; --dark: #1c1d26;
-        }
+        :root { --bg: #f4f7f6; --text: #0d1b3e; --gold: #f1d279; --dark: #0d1b3e; }
+        [data-theme="dark"] { --bg: #0a0b10; --text: #e1e1e1; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; transition: 0.3s; }
+        /* الهيدر */
+        .header { background: var(--dark); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
         
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
-            height: 100vh; 
-            display: flex; 
-            flex-direction: row; /* افتراضي للكمبيوتر */
-            overflow: hidden; 
+        /* الخريطة - تصميم مرن للجوال */
+        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+        .map-grid { 
+            position: relative; width: 320px; height: 320px; transform: rotate(45deg); 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; 
+        }
+        .box { 
+            background: white; border-radius: 15px; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+        }
+        .box i, .box span { transform: rotate(-45deg); font-weight: bold; }
+        .bank-center { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); 
+            width: 80px; height: 80px; background: var(--dark); border-radius: 50%; color: var(--gold); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
         }
 
-        /* إصلاح القائمة الجانبية */
-        .sidebar { 
-            width: 280px; 
-            background: var(--dark); 
-            color: white; 
-            display: flex; 
-            flex-direction: column; 
-            padding: 25px; 
-            z-index: 100;
-        }
-
-        .user-box { text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 20px; }
-        .avatar { width: 60px; height: 60px; background: var(--gold); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin: 0 auto 10px; }
-        
-        .nav-link { padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; margin-bottom: 5px; color: white; text-decoration: none; }
-        .nav-link:hover { background: rgba(255,255,255,0.1); color: var(--gold); }
-
-        /* المحتوى الرئيسي واسم المنظمة */
-        .main { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-        .org-name { position: absolute; top: 30px; font-size: 28px; font-weight: 700; color: var(--text); z-index: 10; }
-
-        /* الخريطة المربعة المطورة للجوال */
-        .map-container { 
-            position: relative; 
-            width: 400px; 
-            height: 400px; 
-            transform: rotate(45deg); 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-            padding: 15px;
-        }
-        
-        .map-box { 
-            background: var(--card); 
-            border-radius: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .map-box i { transform: rotate(-45deg); font-size: 28px; margin-bottom: 8px; }
-        .map-box span { transform: rotate(-45deg); font-weight: bold; font-size: 14px; }
-
-        /* زر البنك المركزي */
-        .bank-circle {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg);
-            width: 100px; height: 100px; background: var(--dark); border: 5px solid var(--bg); border-radius: 50%;
-            color: var(--gold); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; cursor: pointer;
-        }
-
-        /* الدارك مود */
-        .theme-switch { position: absolute; top: 20px; left: 20px; background: var(--card); border: 1px solid var(--gold); color: var(--gold); width: 40px; height: 40px; border-radius: 10px; cursor: pointer; z-index: 200; }
-
-        /* استعلامات الوسائط (Media Queries) للأندرويد والجوالات */
-        @media (max-width: 768px) {
-            body { flex-direction: column; overflow-y: auto; }
-            .sidebar { width: 100%; height: auto; padding: 15px; order: 2; }
-            .main { order: 1; min-height: 500px; padding: 20px; }
-            .map-container { width: 280px; height: 280px; gap: 10px; }
-            .map-box i { font-size: 20px; }
-            .map-box span { font-size: 11px; }
-            .bank-circle { width: 80px; height: 80px; }
-            .org-name { font-size: 22px; top: 15px; }
+        @media (max-width: 480px) {
+            .map-grid { width: 260px; height: 260px; }
+            .bank-center { width: 70px; height: 70px; }
         }
     </style>
 </head>
 <body>
+    <header class="header">
+        <div id="userInfo">تحميل...</div>
+        <button onclick="logout()" style="background:none; border:none; color:#ff6b6b; cursor:pointer;">خروج</button>
+    </header>
 
-    <button class="theme-switch" onclick="toggleMode()"><i id="themeIcon" class="fas fa-moon"></i></button>
-
-    <aside class="sidebar">
-        <div class="user-box">
-            <div class="avatar" id="avtr">P</div>
-            <h3 id="userName">...</h3>
-            <p id="userRank" style="font-size: 11px; color: var(--gold);"></p>
-        </div>
-        <div class="nav-link" onclick="location.href='news.html'"><i class="fas fa-newspaper"></i> جريدة المنظمة</div>
-        <div id="adminPanelBtn" class="nav-link" style="display:none;" onclick="location.href='admin.html'"><i class="fas fa-user-shield"></i> لوحة الإدارة</div>
-        <div class="nav-link" style="color: #ff6b6b; margin-top: 10px;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</div>
-    </aside>
-
-    <main class="main">
-        <div class="org-name">منظمة باريس</div>
-
-        <div class="map-container">
-            <div class="map-box" style="color: #e67e22;" onclick="location.href='market.html'"><i class="fas fa-shopping-basket"></i><span>المتجر</span></div>
-            <div class="map-box" style="color: #3498db;" onclick="location.href='court.html'"><i class="fas fa-gavel"></i><span>المحكمة</span></div>
-            <div class="map-box" style="color: #9b59b6;" onclick="location.href='news.html'"><i class="fas fa-bullhorn"></i><span>الأخبار</span></div>
-            <div class="map-box" style="color: #2ecc71;" onclick="location.href='prison.html'"><i class="fas fa-lock"></i><span>السجن</span></div>
-            
-            <div class="bank-circle" onclick="location.href='bank.html'">
-                <i class="fas fa-vault" style="font-size: 22px;"></i>
-                <span style="font-size: 10px;">البنك</span>
-            </div>
+    <main class="main-content">
+        <div style="position:absolute; top:20px; font-weight:bold; font-size:24px;">منظمة باريس</div>
+        <div class="map-grid">
+            <div class="box" onclick="location.href='market.html'"><i class="fa fa-shopping-cart"></i><span>المتجر</span></div>
+            <div class="box" onclick="location.href='court.html'"><i class="fa fa-gavel"></i><span>المحكمة</span></div>
+            <div class="box" onclick="location.href='news.html'"><i class="fa fa-bullhorn"></i><span>الأخبار</span></div>
+            <div class="box" onclick="location.href='prison.html'"><i class="fa fa-lock"></i><span>السجن</span></div>
+            <div class="bank-center" onclick="location.href='bank.html'"><i class="fa fa-university"></i><span>البنك</span></div>
         </div>
     </main>
 
     <script>
-        // التحقق من الجلسة (LocalStorage أفضل للأندرويد)
-        const session = JSON.parse(localStorage.getItem('paris_session') || sessionStorage.getItem('paris_session'));
-        if (!session) {
+        // التحقق من الجلسة ومنع التحديث التلقائي
+        const sessionData = localStorage.getItem('paris_session');
+        if (!sessionData) {
             window.location.replace('login.html');
         } else {
-            document.getElementById('userName').innerText = session.user;
-            document.getElementById('userRank').innerText = session.rank === 'OWNER' ? 'المالك المباشر' : (session.rank === 'ADMIN' ? 'مسؤول (ADMIN)' : 'عضو');
-            document.getElementById('avtr').innerText = session.user[0].toUpperCase();
-            if (session.rank === 'OWNER' || session.rank === 'ADMIN') document.getElementById('adminPanelBtn').style.display = 'flex';
+            const user = JSON.parse(sessionData);
+            document.getElementById('userInfo').innerText = user.user + " | " + (user.rank === 'OWNER' ? 'المالك' : 'عضو');
         }
 
-        function toggleMode() {
-            const b = document.body;
-            const icon = document.getElementById('themeIcon');
-            if(b.hasAttribute('data-theme')) {
-                b.removeAttribute('data-theme');
-                icon.className = 'fas fa-moon';
-                localStorage.setItem('mode', 'light');
-            } else {
-                b.setAttribute('data-theme', 'dark');
-                icon.className = 'fas fa-sun';
-                localStorage.setItem('mode', 'dark');
-            }
+        function logout() {
+            localStorage.clear();
+            window.location.replace('login.html');
         }
-        if(localStorage.getItem('mode') === 'dark') toggleMode();
-        function logout() { sessionStorage.clear(); localStorage.clear(); window.location.replace('login.html'); }
     </script>
 </body>
 </html>
