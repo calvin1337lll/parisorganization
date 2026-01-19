@@ -1,3 +1,17 @@
+// هذا الكود يوضع في بداية كل صفحة فرعية
+const sessionData = localStorage.getItem('paris_session');
+if (!sessionData) {
+    window.location.replace('login.html');
+} else {
+    const user = JSON.parse(sessionData);
+    // إذا كنت في صفحة الإدارة، تأكد من الرتبة
+    if (window.location.href.includes('admin.html')) {
+        if (user.rank !== 'OWNER' && user.rank !== 'ADMIN') {
+            window.location.replace('index.html');
+        }
+    }
+}
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -190,3 +204,4 @@
     </script>
 </body>
 </html>
+
