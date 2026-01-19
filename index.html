@@ -2,51 +2,129 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>تحكم الإدارة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدينة باريس - الرئيسية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: white; font-family: 'Cairo', sans-serif; padding: 20px; }
-        .card { background: #111; padding: 20px; border-radius: 15px; border: 1px solid #333; max-width: 500px; margin: 20px auto; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #444; color: #f1d279; border-radius: 8px; }
-        button { width: 100%; padding: 12px; background: #f1d279; color: #000; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; }
-        h3 { color: #f1d279; text-align: center; }
+        :root { --gold: #f1d279; --dark-blue: #050a1a; --card-bg: #111; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        
+        body { background-color: #000; color: white; min-height: 100vh; }
+
+        /* الهيدر العلوي */
+        .top-bar { 
+            background: var(--dark-blue); padding: 15px 30px; 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        /* حاوية البطاقات */
+        .container { 
+            max-width: 1200px; margin: 50px auto; 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 25px; padding: 0 20px;
+        }
+
+        /* ستايل البطاقة المستطيلة */
+        .nav-card {
+            background: var(--card-bg); padding: 30px; border-radius: 15px;
+            text-align: center; text-decoration: none; color: white;
+            border-bottom: 4px solid var(--gold); transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+
+        .nav-card i { font-size: 40px; color: var(--gold); }
+        .nav-card span { font-size: 20px; font-weight: bold; }
+
+        .nav-card:hover { 
+            transform: translateY(-10px); 
+            background: #1a1a1a; 
+            box-shadow: 0 10px 20px rgba(241, 210, 121, 0.2); 
+        }
+
+        /* زر الإدارة بلون مختلف */
+        .admin-card { border-color: #ff4757; }
+        .admin-card i { color: #ff4757; }
+
+        /* إشعار منبثق */
+        #global-notice { 
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
+            background: var(--dark-blue); color: var(--gold); padding: 15px 30px; 
+            border-radius: 50px; border: 2px solid var(--gold); z-index: 1000; 
+            transition: 0.5s; box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+        }
+        #global-notice.active { top: 30px; }
+
+        /* زر الوضع الليلي */
+        .theme-btn { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 5px 15px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h3><i class="fas fa-bell"></i> بث إشعار عام</h3>
-        <input type="text" id="alertText" placeholder="اكتب التنبيه هنا...">
-        <button onclick="sendAlert()">إرسال لكل المواطنين</button>
-    </div>
+    <div id="global-notice"><i class="fas fa-bell"></i> &nbsp; <span id="msg"></span></div>
 
-    <div class="card">
-        <h3><i class="fas fa-newspaper"></i> نشر خبر عاجل</h3>
-        <input type="text" id="newsTitle" placeholder="عنوان الخبر">
-        <textarea id="newsContent" placeholder="تفاصيل الخبر..."></textarea>
-        <button onclick="publishNews()">نشر في الصحيفة</button>
-    </div>
+    <header class="top-bar">
+        <h2>موقع باريس</h2>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <button class="theme-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+            <span id="uName">تحميل...</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="news.html" class="nav-card">
+            <i class="fas fa-newspaper"></i>
+            <span>الأخبار</span>
+        </a>
+        <a href="market.html" class="nav-card">
+            <i class="fas fa-shopping-cart"></i>
+            <span>المتجر</span>
+        </a>
+        <a href="bank.html" class="nav-card">
+            <i class="fas fa-university"></i>
+            <span>البنك</span>
+        </a>
+        <a href="prison.html" class="nav-card">
+            <i class="fas fa-lock"></i>
+            <span>السجن</span>
+        </a>
+        <a href="court.html" class="nav-card">
+            <i class="fas fa-gavel"></i>
+            <span>المحكمة</span>
+        </a>
+        <a href="admin.html" id="adminBtn" class="nav-card admin-card" style="display:none;">
+            <i class="fas fa-user-shield"></i>
+            <span>الإدارة</span>
+        </a>
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        
+        const userData = JSON.parse(localStorage.getItem('paris_session'));
+        if(userData) {
+            document.getElementById('uName').innerText = userData.user;
+            if(userData.rank === 'OWNER' || userData.rank === 'ADMIN') {
+                document.getElementById('adminBtn').style.display = 'flex';
+            }
+        }
 
-        window.sendAlert = () => {
-            const val = document.getElementById('alertText').value;
-            if(val) push(ref(db, 'notifications'), { message: val });
-            alert("تم الإرسال");
-        };
+        // استقبال الإشعارات
+        onChildAdded(ref(db, 'notifications'), (snap) => {
+            const notice = document.getElementById('global-notice');
+            document.getElementById('msg').innerText = snap.val().message;
+            notice.classList.add('active');
+            if (Notification.permission === 'granted') new Notification("باريس تنبيه 🔔", { body: snap.val().message });
+            setTimeout(() => notice.classList.remove('active'), 6000);
+        });
 
-        window.publishNews = () => {
-            const t = document.getElementById('newsTitle').value;
-            const b = document.getElementById('newsContent').value;
-            if(t && b) push(ref(db, 'news'), { title: t, body: b, time: new Date().toLocaleTimeString() });
-            alert("تم نشر الخبر");
-        };
+        if (Notification.permission !== 'granted') Notification.requestPermission();
     </script>
 </body>
 </html>
