@@ -3,171 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>باريس - الرئيسية</title>
+    <title>باريس - الخريطة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* تعريف الألوان الأساسية */
-        :root { 
-            --dark-blue: #050a1a; 
-            --gold: #f1d279; 
-            --card-bg: #111111; 
-            --text-color: #ffffff;
-        }
+        :root { --gold: #f1d279; --dark: #050a1a; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background-color: #000; color: white; margin: 0; overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center; }
 
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        /* حاوية الخريطة الدائرية */
+        .map-container { position: relative; width: 600px; height: 600px; display: flex; justify-content: center; align-items: center; }
 
-        body { 
-            background-color: #000000; 
-            color: var(--text-color); 
-            min-height: 100vh;
-        }
+        /* الدوائر والخطوط */
+        .map-container::before { content: ''; position: absolute; width: 450px; height: 450px; border: 2px dashed rgba(241, 210, 121, 0.3); border-radius: 50%; }
 
-        /* الهيدر العلوي */
-        .header { 
-            background-color: var(--dark-blue); 
-            padding: 15px 40px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            border-bottom: 1px solid rgba(241, 210, 121, 0.2);
-        }
+        .nav-item { position: absolute; text-decoration: none; color: white; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: 0.3s; width: 100px; }
+        .nav-item i { width: 60px; height: 60px; background: #111; border: 2px solid var(--gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: var(--gold); box-shadow: 0 0 15px rgba(241, 210, 121, 0.4); }
+        .nav-item span { font-weight: bold; font-size: 14px; text-shadow: 0 2px 5px black; }
+        .nav-item:hover { transform: scale(1.1); }
 
-        .header h1 { font-size: 20px; color: var(--text-color); }
+        /* توزيع الأقسام حول المركز */
+        .bank-center { z-index: 10; }
+        .bank-center i { width: 100px; height: 100px; font-size: 40px; background: var(--gold); color: var(--dark); }
 
-        .user-section { display: flex; align-items: center; gap: 15px; }
-        .theme-toggle { 
-            background: none; 
-            border: 1px solid var(--gold); 
-            color: var(--gold); 
-            padding: 5px 10px; 
-            border-radius: 5px; 
-            cursor: pointer;
-        }
+        /* المواقع الدائرية */
+        .pos-news { transform: translate(0, -220px); }    /* فوق */
+        .pos-market { transform: translate(220px, 0); }   /* يمين */
+        .pos-prison { transform: translate(0, 220px); }    /* تحت */
+        .pos-court { transform: translate(-220px, 0); }   /* يسار */
+        .pos-admin { transform: translate(160px, -160px); } /* زاوية */
 
-        /* شبكة الأزرار - Grid المصلح */
-        .nav-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 20px; 
-            padding: 40px; 
-            max-width: 1400px; 
-            margin: 0 auto;
-        }
-
-        .nav-card { 
-            background-color: var(--card-bg); 
-            padding: 30px 20px; 
-            border-radius: 12px; 
-            text-align: center; 
-            text-decoration: none; 
-            color: var(--text-color); 
-            border-bottom: 3px solid var(--gold); 
-            transition: 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .nav-card:hover { 
-            transform: translateY(-5px); 
-            background-color: #1a1a1a;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-
-        .nav-card i { font-size: 28px; color: var(--text-color); }
-        .nav-card span { font-weight: bold; font-size: 18px; }
-
-        /* إشعار النظام */
-        #global-notice { 
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
-            background: var(--dark-blue); color: var(--gold); padding: 15px 30px; 
-            border-radius: 50px; border: 2px solid var(--gold); z-index: 10000; 
-            transition: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-        }
+        /* الإشعار */
+        #global-notice { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: var(--gold); padding: 15px 30px; border-radius: 50px; border: 2px solid var(--gold); z-index: 10000; transition: 0.5s; }
         #global-notice.show { top: 30px; }
-
     </style>
 </head>
 <body>
 
     <div id="global-notice"><i class="fas fa-bell"></i> &nbsp; <span id="notice-msg"></span></div>
 
-    <header class="header">
-        <h1>موقع باريس</h1>
-        <div class="user-section">
-            <button class="theme-toggle" onclick="toggleDarkMode()"><i class="fas fa-moon"></i></button>
-            <span id="uName">...</span>
-        </div>
-    </header>
-
-    <main class="nav-grid">
-        <a href="news.html" class="nav-card">
-            <i class="fas fa-newspaper"></i>
-            <span>الأخبار</span>
-        </a>
-        <a href="market.html" class="nav-card">
-            <i class="fas fa-shopping-cart"></i>
-            <span>المتجر</span>
-        </a>
-        <a href="bank.html" class="nav-card">
+    <div class="map-container">
+        <a href="bank.html" class="nav-item bank-center">
             <i class="fas fa-university"></i>
             <span>البنك</span>
         </a>
-        <a href="prison.html" class="nav-card">
+
+        <a href="news.html" class="nav-item pos-news">
+            <i class="fas fa-newspaper"></i>
+            <span>الأخبار</span>
+        </a>
+        <a href="market.html" class="nav-item pos-market">
+            <i class="fas fa-shopping-cart"></i>
+            <span>المتجر</span>
+        </a>
+        <a href="prison.html" class="nav-item pos-prison">
             <i class="fas fa-lock"></i>
             <span>السجن</span>
         </a>
-        <a href="court.html" class="nav-card">
+        <a href="court.html" class="nav-item pos-court">
             <i class="fas fa-gavel"></i>
             <span>المحكمة</span>
         </a>
-        <a href="admin.html" id="adminBtn" class="nav-card" style="display:none;">
-            <i class="fas fa-user-shield"></i>
+        <a href="admin.html" id="adminBtn" class="nav-item pos-admin" style="display:none;">
+            <i class="fas fa-user-shield" style="border-color: #ff4757; color: #ff4757;"></i>
             <span>الإدارة</span>
         </a>
-    </main>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = { 
-            apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", 
-            databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", 
-            projectId: "webparis-ef921" 
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const userData = JSON.parse(localStorage.getItem('paris_session'));
 
-        if(!userData) {
-            window.location.href = 'login.html';
-        } else {
-            document.getElementById('uName').innerText = userData.user;
-            if(userData.rank === 'OWNER' || userData.rank === 'ADMIN') {
-                document.getElementById('adminBtn').style.display = 'flex';
-            }
+        if(userData && (userData.rank === 'OWNER' || userData.rank === 'ADMIN')) {
+            document.getElementById('adminBtn').style.display = 'flex';
         }
 
-        // استقبال الإشعارات
         onChildAdded(ref(db, 'notifications'), (snap) => {
-            const data = snap.val();
             const notice = document.getElementById('global-notice');
-            document.getElementById('notice-msg').innerText = data.message;
+            document.getElementById('notice-msg').innerText = snap.val().message;
             notice.classList.add('show');
-            
-            if (Notification.permission === 'granted') {
-                new Notification("تنبيه من باريس 🔔", { body: data.message });
-            }
-            
             setTimeout(() => notice.classList.remove('show'), 6000);
         });
-
-        if (Notification.permission !== 'granted') Notification.requestPermission();
     </script>
 </body>
 </html>
