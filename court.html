@@ -3,152 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محكمة باريس العليا - Paris Court</title>
+    <title>محكمة باريس العليا</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --dark: #0d1b3e; --gold: #f1d279; --brown: #5d4037; --white: #ffffff; }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-        body { background: #f4f1ea; transition: 0.3s; min-height: 100vh; display: flex; flex-direction: column; }
+        :root { --dark: #1a1a1a; --gold: #f1d279; --bg: #eaddca; --card: #ffffff; --text: #333; }
+        body.dark-mode { --bg: #121212; --card: #1e1e1e; --text: #ffffff; }
         
-        /* Dark Mode Styles */
-        body.dark-mode { background: #121212; color: #e0e0e0; }
-        .dark-mode .court-header { background: #050a1a; border-bottom: 2px solid var(--gold); }
-        .dark-mode .case-card, .dark-mode .judge-box { background: #1e1e1e; border-color: #333; color: white; }
-        .dark-mode input, .dark-mode textarea { background: #2a2a2a; color: white; border-color: #444; }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding-bottom: 50px; }
 
-        /* الهيدر */
-        .court-header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; font-size: 14px; background: transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        #global-notice { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #0d1b3e; color: var(--gold); padding: 15px 25px; border-radius: 12px; border: 2px solid var(--gold); z-index: 10000; transition: 0.5s; min-width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #global-notice.show { top: 20px; }
 
-        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; flex: 1; }
+        .header { background: var(--dark); padding: 20px; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--gold); }
+        .container { max-width: 700px; margin: 20px auto; padding: 0 15px; }
+        
+        .court-title { text-align: center; margin-bottom: 30px; }
+        .court-title i { font-size: 50px; color: #5d4037; margin-bottom: 10px; }
+        .dark-mode .court-title i { color: var(--gold); }
 
-        /* صندوق القاضي (للإدارة) */
-        .judge-box { background: white; padding: 25px; border-radius: 15px; border: 2px solid var(--brown); margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .judge-box h3 { color: var(--brown); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .dark-mode .judge-box h3 { color: var(--gold); }
-        input, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
-        textarea { height: 100px; resize: none; }
-        .issue-btn { width: 100%; padding: 12px; background: var(--brown); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .dark-mode .issue-btn { background: var(--gold); color: var(--dark); }
-
-        /* كرت القضية */
-        .case-card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; border-right: 8px solid var(--brown); position: relative; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+        .case-card { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-right: 10px solid #5d4037; box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: relative; }
         .dark-mode .case-card { border-right-color: var(--gold); }
-        .case-header { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-bottom: 10px; }
-        .case-title { font-size: 18px; font-weight: bold; color: var(--dark); margin-bottom: 8px; }
-        .dark-mode .case-title { color: var(--gold); }
-        .case-desc { line-height: 1.6; white-space: pre-wrap; }
-        .del-case { position: absolute; top: 15px; left: 15px; color: #e74c3c; cursor: pointer; }
-
-        @media (max-width: 600px) { .container { margin: 15px auto; } }
+        .case-header { display: flex; justify-content: space-between; font-size: 12px; color: #777; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .case-subject { font-size: 20px; font-weight: bold; margin-bottom: 10px; color: #5d4037; }
+        .dark-mode .case-subject { color: var(--gold); }
+        .case-details { line-height: 1.6; white-space: pre-wrap; }
+        .judge-name { margin-top: 15px; font-weight: bold; font-size: 14px; display: block; text-align: left; color: var(--gold); }
     </style>
 </head>
 <body>
 
-    <header class="court-header">
-        <div style="display:flex; gap:10px;">
-            <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
-            <button onclick="toggleDarkMode()" class="back-btn"><i class="fas fa-moon"></i></button>
-        </div>
-        <h2>ميزان العدالة</h2>
-        <div id="uNameDisplay" style="color:var(--gold); font-weight:bold;">تحميل...</div>
+    <div id="global-notice"><i class="fas fa-bell"></i> <span id="notice-msg"></span></div>
+
+    <header class="header">
+        <a href="index.html" style="color:var(--gold); text-decoration:none;"><i class="fas fa-arrow-right"></i> الرئيسية</a>
+        <h2>قاعة المحكمة</h2>
+        <div></div>
     </header>
 
     <div class="container">
-        <div id="judgePanel" style="display:none;" class="judge-box">
-            <h3><i class="fas fa-gavel"></i> إصدار حكم قضائي</h3>
-            <input type="text" id="caseSubject" placeholder="عنوان القضية (مثلاً: حكم محكمة)">
-            <textarea id="caseDetails" placeholder="تفاصيل الحكم والحيثيات..."></textarea>
-            <button onclick="postCase()" class="issue-btn">نشر الحكم في الجريدة الرسمية</button>
+        <div class="court-title">
+            <i class="fas fa-gavel"></i>
+            <h1>ميزان العدالة</h1>
+            <p>سجل القضايا والأحكام الصادرة</p>
         </div>
 
-        <h3 style="margin-bottom: 20px;"><i class="fas fa-scroll"></i> سجل الأحكام والقضايا:</h3>
-        <div id="casesFeed"></div>
+        <div id="casesList">
+            </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = { 
-            apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", 
-            databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", 
-            projectId: "webparis-ef921" 
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const userData = JSON.parse(localStorage.getItem('paris_session'));
 
-        if (!userData) window.location.href = 'login.html';
-        document.getElementById('uNameDisplay').innerText = userData.user;
-
-        // نظام الوضع الليلي الموحد
-        window.toggleDarkMode = () => {
-            const isDark = document.body.classList.toggle('dark-mode');
-            localStorage.setItem('paris_theme', isDark ? 'dark' : 'light');
-        };
-        if (localStorage.getItem('paris_theme') === 'dark') document.body.classList.add('dark-mode');
-
-        // إظهار لوحة التحكم للمسؤولين
-        if (userData.rank === 'OWNER' || userData.rank === 'ADMIN') {
-            document.getElementById('judgePanel').style.display = 'block';
-        }
-
-        // نشر قضية جديدة
-        window.postCase = async () => {
-            const subject = document.getElementById('caseSubject').value.trim();
-            const details = document.getElementById('caseDetails').value.trim();
-
-            if (!subject || !details) return alert("يرجى كتابة عنوان وتفاصيل الحكم");
-
-            const courtRef = ref(db, 'court/cases');
-            await set(push(courtRef), {
-                subject: subject,
-                details: details,
-                judge: userData.user,
-                timestamp: new Date().toLocaleString('ar-EG')
-            });
-
-            alert("تم تسجيل الحكم بنجاح");
-            document.getElementById('caseSubject').value = "";
-            document.getElementById('caseDetails').value = "";
-        };
-
-        // تحميل سجل القضايا
-        function loadCases() {
-            onValue(ref(db, 'court/cases'), (snap) => {
-                let html = "";
-                const data = snap.val();
-                if (data) {
-                    Object.keys(data).reverse().forEach(id => {
-                        const c = data[id];
-                        html += `
-                            <div class="case-card">
-                                ${(userData.rank === 'OWNER' || userData.rank === 'ADMIN') ? `<i class="fas fa-trash-alt del-case" onclick="deleteCase('${id}')"></i>` : ''}
-                                <div class="case-header">
-                                    <span>بواسطة القاضي: ${c.judge}</span>
-                                    <span>${c.timestamp}</span>
-                                </div>
-                                <div class="case-title">${c.subject}</div>
-                                <div class="case-desc">${c.details}</div>
-                            </div>`;
-                    });
-                } else {
-                    html = "<p style='text-align:center; opacity:0.5; padding:20px;'>لا توجد قضايا مسجلة حالياً.</p>";
-                }
-                document.getElementById('casesFeed').innerHTML = html;
-            });
-        }
-
-        window.deleteCase = (id) => {
-            if (confirm("هل تريد حذف هذا الحكم نهائياً؟")) {
-                remove(ref(db, `court/cases/${id}`));
+        // تحميل القضايا
+        onValue(ref(db, 'court/cases'), (snap) => {
+            let html = "";
+            const data = snap.val();
+            if(data) {
+                Object.keys(data).reverse().forEach(id => {
+                    const c = data[id];
+                    html += `
+                    <div class="case-card">
+                        <div class="case-header">
+                            <span>رقم القضية: #${id.substring(1, 6)}</span>
+                            <span>${c.timestamp}</span>
+                        </div>
+                        <div class="case-subject">${c.subject}</div>
+                        <div class="case-details">${c.details}</div>
+                        <span class="judge-name">القاضي: ${c.judge}</span>
+                    </div>`;
+                });
+            } else {
+                html = "<p style='text-align:center; opacity:0.5;'>لا توجد قضايا مسجلة حالياً.</p>";
             }
-        };
+            document.getElementById('casesList').innerHTML = html;
+        });
 
-        loadCases();
+        // نظام الإشعارات
+        onChildAdded(ref(db, 'notifications'), (snap) => {
+            const data = snap.val();
+            const notice = document.getElementById('global-notice');
+            document.getElementById('notice-msg').innerText = data.message;
+            notice.classList.add('show');
+            if (Notification.permission === 'granted') new Notification("تنبيه من المحكمة ⚖️", { body: data.message });
+            new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3').play();
+            setTimeout(() => notice.classList.remove('show'), 7000);
+        });
+
+        if (localStorage.getItem('paris_theme') === 'dark') document.body.classList.add('dark-mode');
     </script>
 </body>
 </html>
