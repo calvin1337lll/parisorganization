@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دخول - منظمة باريس</title>
+    <title>دخول النظام - منظمة باريس</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { background: #0d1b3e; font-family: 'Cairo', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 400px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
-        button { width: 100%; padding: 12px; background: #0d1b3e; color: #f1d279; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .login-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 380px; }
+        h2 { color: #0d1b3e; margin-bottom: 20px; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; text-align: center; outline: none; }
+        button { width: 100%; padding: 14px; background: #0d1b3e; color: #f1d279; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 18px; margin-top: 10px; transition: 0.3s; }
+        .signup-link { margin-top: 20px; font-size: 14px; color: #666; }
+        .signup-link a { color: #3498db; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
+
     <div class="login-card">
-        <h2 style="color: #0d1b3e;">دخول النظام</h2>
+        <div style="font-size: 50px;">👑</div>
+        <h2>دخول النظام</h2>
         <input type="text" id="username" placeholder="اسم المستخدم">
         <input type="password" id="password" placeholder="كلمة السر">
-        <button onclick="handleLogin()">دخول</button>
+        <button id="loginBtn" onclick="handleLogin()">دخول</button>
+        <div class="signup-link">
+            ليس لديك حساب؟ <a href="signup.html">إنشاء حساب جديد</a>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4",
@@ -34,24 +42,35 @@
         const db = getDatabase(app);
 
         window.handleLogin = async () => {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
+            const userInp = document.getElementById('username').value.trim();
+            const passInp = document.getElementById('password').value.trim();
+            const btn = document.getElementById('loginBtn');
 
-            if(!user || !pass) return alert("أدخل البيانات");
+            if(!userInp || !passInp) return alert("الرجاء إدخال البيانات");
 
-            const userRef = ref(db, 'users/' + user);
-            const snapshot = await get(userRef);
+            btn.disabled = true;
+            btn.innerText = "جاري التحقق...";
 
-            if (snapshot.exists() && snapshot.val().password === pass) {
-                // حفظ البيانات في localStorage لضمان استقرار الأندرويد
-                localStorage.setItem('paris_session', JSON.stringify({
-                    user: user,
-                    rank: snapshot.val().rank || 'MEMBER'
-                }));
-                window.location.replace('index.html'); // استخدام replace لمنع حلقة التحديث
-            } else {
-                alert("بيانات خاطئة");
-            }
+            try {
+                const dbRef = ref(db);
+                // البحث بالنسخة الصغيرة لضمان إيجاد الحساب مهما كانت طريقة الكتابة
+                const snapshot = await get(child(dbRef, `users/${userInp.toLowerCase()}`));
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    if (data.password.toString() === passInp) {
+                        // حفظ الجلسة بالاسم الأصلي (بأحرفه الكبيرة)
+                        localStorage.setItem('paris_session', JSON.stringify({
+                            user: data.username || userInp,
+                            rank: data.rank || 'MEMBER'
+                        }));
+                        window.location.replace('index.html');
+                    } else { alert("كلمة السر خاطئة"); }
+                } else { alert("اسم المستخدم غير موجود"); }
+            } catch (e) { alert("خطأ في الاتصال"); }
+            
+            btn.disabled = false;
+            btn.innerText = "دخول";
         };
     </script>
 </body>
