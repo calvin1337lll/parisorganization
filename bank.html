@@ -2,108 +2,82 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بنك باريس - Paris Bank</title>
+    <title>البنك المركزي - باريس</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --dark: #0d1b3e; --gold: #f1d279; --white: #ffffff; }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-        body { background: #f0f2f5; transition: 0.3s; min-height: 100vh; }
-        
-        /* Dark Mode */
+        :root { --dark: #0d1b3e; --gold: #f1d279; }
+        body { font-family: 'Cairo'; background: #f4f7f6; margin: 0; padding-bottom: 30px; }
         body.dark-mode { background: #121212; color: white; }
-        .dark-mode .bank-header { background: #050a1a; border-bottom: 1px solid var(--gold); }
-        .dark-mode .balance-card, .dark-mode .transfer-box { background: #1e1e1e; border-color: #333; color: white; }
-        .dark-mode input { background: #2a2a2a; color: white; border-color: #444; }
-
-        .bank-header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
-        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; cursor: pointer; background: transparent; }
-        
-        .container { max-width: 500px; margin: 30px auto; padding: 0 20px; }
-        .balance-card { background: linear-gradient(135deg, var(--dark), #1a3a8a); color: white; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.2); margin-bottom: 25px; border-bottom: 4px solid var(--gold); }
-        .balance-card h3 { opacity: 0.8; font-size: 16px; margin-bottom: 10px; }
-        .balance-amount { font-size: 35px; font-weight: bold; color: var(--gold); }
-
-        .transfer-box { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .transfer-box h4 { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
-        .send-money-btn { width: 100%; padding: 15px; background: var(--dark); color: var(--gold); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        #global-notice { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: var(--gold); padding: 15px; border-radius: 12px; border: 2px solid var(--gold); z-index: 10000; transition: 0.5s; text-align: center; min-width: 300px; }
+        .bank-card { background: linear-gradient(135deg, #0d1b3e, #1e3a8a); color: white; padding: 40px; margin: 20px auto; border-radius: 25px; max-width: 450px; text-align: center; border-bottom: 5px solid var(--gold); }
+        .input-box { background: white; padding: 20px; border-radius: 15px; max-width: 450px; margin: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .dark-mode .input-box { background: #1e1e1e; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; }
+        .btn { width: 100%; padding: 15px; background: var(--dark); color: var(--gold); border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
+    <div id="global-notice"><i class="fas fa-bell"></i> <span id="notice-msg"></span></div>
 
-    <header class="bank-header">
-        <div style="display:flex; gap:10px;">
-            <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
-            <button onclick="toggleDarkMode()" class="back-btn"><i class="fas fa-moon"></i></button>
-        </div>
-        <h2>بنك باريس المركزي</h2>
-        <div id="uNameDisplay" style="color:var(--gold);">...</div>
-    </header>
+    <div style="padding: 15px;"><a href="index.html" style="color:var(--dark); text-decoration: none;"><i class="fas fa-arrow-right"></i> الرئيسية</a></div>
 
-    <div class="container">
-        <div class="balance-card">
-            <h3>رصيدك الحالي</h3>
-            <div class="balance-amount" id="myBalance">0 $</div>
-        </div>
+    <div class="bank-card">
+        <p style="opacity: 0.8;">الرصيد المتاح</p>
+        <h1 id="myMoney" style="font-size: 45px; color: var(--gold);">0 $</h1>
+    </div>
 
-        <div class="transfer-box">
-            <h4><i class="fas fa-exchange-alt"></i> تحويل سريع</h4>
-            <input type="text" id="receiverName" placeholder="اسم المستخدم المستلم">
-            <input type="number" id="transferAmount" placeholder="المبلغ المراد تحويله">
-            <button onclick="transferMoney()" class="send-money-btn">تأكيد عملية التحويل</button>
-        </div>
+    <div class="input-box">
+        <h3><i class="fas fa-exchange-alt"></i> تحويل أموال</h3>
+        <input type="text" id="toUser" placeholder="اسم المستلم">
+        <input type="number" id="amount" placeholder="المبلغ">
+        <button class="btn" onclick="transfer()">إرسال الآن</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, update, get, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const userData = JSON.parse(localStorage.getItem('paris_session'));
 
-        if (!userData) window.location.href = 'login.html';
-        document.getElementById('uNameDisplay').innerText = userData.user;
-
-        window.toggleDarkMode = () => {
-            const isDark = document.body.classList.toggle('dark-mode');
-            localStorage.setItem('paris_theme', isDark ? 'dark' : 'light');
-        };
-        if (localStorage.getItem('paris_theme') === 'dark') document.body.classList.add('dark-mode');
-
-        // تحديث الرصيد لحظياً
+        // مراقبة الرصيد
         onValue(ref(db, `users/${userData.user}/money`), (snap) => {
-            document.getElementById('myBalance').innerText = (snap.val() || 0) + " $";
+            document.getElementById('myMoney').innerText = (snap.val() || 0) + " $";
         });
 
-        window.transferMoney = async () => {
-            const receiver = document.getElementById('receiverName').value.trim();
-            const amount = parseInt(document.getElementById('transferAmount').value);
-            
-            if(!receiver || !amount || amount <= 0) return alert("بيانات غير صحيحة");
+        // تحويل أموال
+        window.transfer = async () => {
+            const to = document.getElementById('toUser').value.trim();
+            const amt = parseInt(document.getElementById('amount').value);
+            if(!to || !amt || amt <= 0) return alert("خطأ في البيانات");
 
             const senderRef = ref(db, `users/${userData.user}`);
-            const receiverRef = ref(db, `users/${receiver}`);
+            const recvRef = ref(db, `users/${to}`);
 
             const senderSnap = await get(senderRef);
-            const receiverSnap = await get(receiverRef);
+            const recvSnap = await get(recvRef);
 
-            if(!receiverSnap.exists()) return alert("المستلم غير موجود");
-            
-            const myMoney = senderSnap.val().money || 0;
-            if(myMoney < amount) return alert("رصيدك لا يكفي");
+            if(!recvSnap.exists()) return alert("المستلم غير موجود");
+            if(senderSnap.val().money < amt) return alert("رصيدك غير كافي");
 
-            // تنفيذ الحوالة
-            await update(senderRef, { money: myMoney - amount });
-            await update(receiverRef, { money: (receiverSnap.val().money || 0) + amount });
-
-            alert("تم التحويل بنجاح!");
-            document.getElementById('receiverName').value = "";
-            document.getElementById('transferAmount').value = "";
+            await update(senderRef, { money: senderSnap.val().money - amt });
+            await update(recvRef, { money: (recvSnap.val().money || 0) + amt });
+            alert("تم التحويل!");
         };
+
+        // استقبال الإشعارات
+        onChildAdded(ref(db, 'notifications'), (snap) => {
+            const notice = document.getElementById('global-notice');
+            document.getElementById('notice-msg').innerText = snap.val().message;
+            notice.classList.add('show');
+            if (Notification.permission === 'granted') new Notification("تنبيه بنكي", { body: snap.val().message });
+            setTimeout(() => notice.classList.remove('show'), 7000);
+        });
+
+        if (localStorage.getItem('paris_theme') === 'dark') document.body.classList.add('dark-mode');
     </script>
 </body>
 </html>
