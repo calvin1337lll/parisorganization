@@ -2,67 +2,76 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الرئيسية - منظمة باريس</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>باريس - الرئيسية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --bg: #f4f7f6; --card: #ffffff; --text: #0d1b3e; --gold: #f1d279; --dark: #0d1b3e; }
-        [data-theme="dark"] { --bg: #0a0b10; --card: #15161c; --text: #e1e1e1; --dark: #1c1d26; }
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; transition: 0.3s; }
-        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        .header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        
-        /* وضع الدارك مود في الزاوية */
-        .theme-btn { position: absolute; top: 10px; right: 10px; background: var(--card); border: 1px solid var(--gold); color: var(--gold); width: 40px; height: 40px; border-radius: 10px; cursor: pointer; }
-
-        .map-container { position: relative; width: 320px; height: 320px; transform: rotate(45deg); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .box { background: var(--card); border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .box i, .box span { transform: rotate(-45deg); font-weight: bold; }
-        .center-bank { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); width: 85px; height: 85px; background: var(--dark); border-radius: 50%; color: var(--gold); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border: 4px solid var(--bg); }
-
-        @media (max-width: 480px) { .map-container { width: 280px; height: 280px; } .org-name { font-size: 22px !important; } }
+        :root { --dark: #0d1b3e; --gold: #f1d279; }
+        body { font-family: 'Cairo', sans-serif; background: #f0f2f5; transition: 0.3s; margin: 0; }
+        body.dark-mode { background: #121212; color: white; }
+        #global-notice { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--dark); color: var(--gold); padding: 15px; border-radius: 12px; border: 2px solid var(--gold); z-index: 10000; transition: 0.5s; min-width: 300px; text-align: center; }
+        .header { background: var(--dark); padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; padding: 20px; }
+        .nav-card { background: white; padding: 20px; border-radius: 15px; text-align: center; text-decoration: none; color: var(--dark); font-weight: bold; border-bottom: 4px solid var(--gold); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .dark-mode .nav-card { background: #1e1e1e; color: white; }
     </style>
 </head>
 <body>
+    <div id="global-notice"><i class="fas fa-bell"></i> <span id="notice-msg"></span></div>
+
     <header class="header">
-        <div id="userDisplay">جاري التحميل...</div>
-        <div style="display:flex; gap:15px;">
-            <div id="adminBtn" style="display:none; cursor:pointer; color:var(--gold);" onclick="location.href='admin.html'"><i class="fa fa-user-shield"></i></div>
-            <div onclick="logout()" style="cursor:pointer; color:#ff6b6b;"><i class="fa fa-sign-out-alt"></i></div>
+        <div>
+            <span id="uName">تحميل...</span>
+            <button onclick="toggleDarkMode()" style="background:none; border:1px solid var(--gold); color:var(--gold); cursor:pointer; padding:5px; border-radius:5px; margin-right:10px;"><i class="fas fa-moon"></i></button>
         </div>
+        <h3>موقع باريس</h3>
     </header>
 
-    <main class="main">
-        <button class="theme-btn" onclick="toggleMode()"><i id="tIcon" class="fa fa-moon"></i></button>
-        <div class="org-name" style="position:absolute; top:30px; font-weight:bold; font-size:28px;">منظمة باريس</div>
-        
-        <div class="map-container">
-            <div class="box" style="color:#e67e22;" onclick="location.href='market.html'"><i class="fa fa-shopping-cart"></i><span>المتجر</span></div>
-            <div class="box" style="color:#3498db;" onclick="location.href='court.html'"><i class="fa fa-gavel"></i><span>المحكمة</span></div>
-            <div class="box" style="color:#9b59b6;" onclick="location.href='news.html'"><i class="fa fa-newspaper"></i><span>الأخبار</span></div>
-            <div class="box" style="color:#2ecc71;" onclick="location.href='prison.html'"><i class="fa fa-lock"></i><span>السجن</span></div>
-            <div class="center-bank" onclick="location.href='bank.html'"><i class="fa fa-university"></i><span style="font-size:10px;">البنك</span></div>
-        </div>
-    </main>
+    <div class="nav-grid">
+        <a href="news.html" class="nav-card"><i class="fas fa-newspaper"></i><br>الأخبار</a>
+        <a href="market.html" class="nav-card"><i class="fas fa-shopping-cart"></i><br>المتجر</a>
+        <a href="bank.html" class="nav-card"><i class="fas fa-university"></i><br>البنك</a>
+        <a href="prison.html" class="nav-card"><i class="fas fa-lock"></i><br>السجن</a>
+        <a href="court.html" class="nav-card"><i class="fas fa-gavel"></i><br>المحكمة</a>
+        <a href="admin.html" id="adminBtn" class="nav-card" style="display:none;"><i class="fas fa-user-shield"></i><br>الإدارة</a>
+    </div>
 
-    <script>
-        const session = JSON.parse(localStorage.getItem('paris_session'));
-        if (!session) { window.location.replace('login.html'); }
-        else {
-            document.getElementById('userDisplay').innerText = session.user + " | " + (session.rank === 'OWNER' ? 'المالك' : (session.rank === 'ADMIN' ? 'مسؤول' : 'عضو'));
-            if(session.rank === 'OWNER' || session.rank === 'ADMIN') document.getElementById('adminBtn').style.display = 'block';
-        }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        function toggleMode() {
-            const b = document.body; const i = document.getElementById('tIcon');
-            if(b.hasAttribute('data-theme')) { b.removeAttribute('data-theme'); i.className='fa fa-moon'; localStorage.setItem('mode','light'); }
-            else { b.setAttribute('data-theme','dark'); i.className='fa fa-sun'; localStorage.setItem('mode','dark'); }
-        }
-        if(localStorage.getItem('mode')==='dark') toggleMode();
-        function logout() { localStorage.clear(); window.location.replace('login.html'); }
+        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const userData = JSON.parse(localStorage.getItem('paris_session'));
+
+        if(!userData) window.location.href = 'login.html';
+        document.getElementById('uName').innerText = userData.user;
+        if(userData.rank === 'OWNER' || userData.rank === 'ADMIN') document.getElementById('adminBtn').style.display = 'block';
+
+        // طلب إذن إشعارات النظام
+        if (Notification.permission !== 'granted') Notification.requestPermission();
+
+        window.toggleDarkMode = () => {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('paris_theme', isDark ? 'dark' : 'light');
+        };
+        if (localStorage.getItem('paris_theme') === 'dark') document.body.classList.add('dark-mode');
+
+        // استقبال الإشعارات (المتصفح + الموقع)
+        onChildAdded(ref(db, 'notifications'), (snap) => {
+            const data = snap.val();
+            // إشعار داخل الموقع
+            const notice = document.getElementById('global-notice');
+            document.getElementById('notice-msg').innerText = data.message;
+            notice.style.top = "20px";
+            // إشعار نظام التشغيل
+            if (Notification.permission === 'granted') {
+                new Notification("تنبيه من إدارة باريس 🔔", { body: data.message, icon: "https://cdn-icons-png.flaticon.com/512/1827/1827349.png" });
+            }
+            new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3').play();
+            setTimeout(() => notice.style.top = "-100px", 7000);
+        });
     </script>
 </body>
 </html>
