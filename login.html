@@ -2,84 +2,71 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>دخول مدينة باريس</title>
+    <title>بوابة مدينة باريس</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #f1d279; --dark: #000; }
-        body { background: var(--dark); color: white; font-family: 'Cairo', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        
+        body { background: var(--dark); color: white; font-family: 'Cairo', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .login-box { 
             background: #0a0a0a; padding: 40px; border-radius: 20px; border: 1px solid #1a1a1a; 
             width: 350px; text-align: center; position: relative; border-top: 4px solid var(--gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .login-box::before, .login-box::after { content: ''; position: absolute; width: 30px; height: 30px; border: 2px solid var(--gold); }
-        .login-box::before { top: 10px; right: 10px; border-bottom: 0; border-left: 0; }
-        .login-box::after { bottom: 10px; left: 10px; border-top: 0; border-right: 0; }
-
-        h2 { color: var(--gold); margin-bottom: 30px; letter-spacing: 2px; }
+        h2 { color: var(--gold); margin-bottom: 25px; }
         input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 10px; text-align: center; outline: none; }
         input:focus { border-color: var(--gold); }
-        button { width: 100%; padding: 12px; background: var(--gold); color: black; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        button:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--gold); }
+        button { width: 100%; padding: 12px; background: var(--gold); color: black; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; margin-top: 20px; }
         .toggle-link { margin-top: 15px; font-size: 13px; color: #666; cursor: pointer; display: block; }
         .toggle-link span { color: var(--gold); }
     </style>
 </head>
 <body>
-
     <div class="login-box">
-        <i class="fas fa-shield-alt" style="font-size: 50px; color: var(--gold); margin-bottom: 20px;"></i>
-        <h2 id="formTitle">تسجيل الدخول</h2>
-        
-        <input type="text" id="username" placeholder="اسم المستخدم">
-        <input type="password" id="password" placeholder="كلمة المرور">
-        
-        <button id="mainBtn">دخول المدينة</button>
-        <p class="toggle-link" id="toggleLink">ليس لديك حساب؟ <span>إنشاء حساب</span></p>
+        <i class="fas fa-lock" style="font-size: 40px; color: var(--gold); margin-bottom: 15px;"></i>
+        <h2 id="fTitle">تسجيل الدخول</h2>
+        <input type="text" id="user" placeholder="اسم المستخدم">
+        <input type="password" id="pass" placeholder="كلمة المرور">
+        <button id="btnAction">دخول المدينة</button>
+        <p class="toggle-link" id="toggle">ليس لديك حساب؟ <span>إنشاء حساب</span></p>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const config = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" };
         const app = initializeApp(config);
         const db = getDatabase(app);
 
         let isLogin = true;
-        const formTitle = document.getElementById('formTitle');
-        const mainBtn = document.getElementById('mainBtn');
-        const toggleLink = document.getElementById('toggleLink');
+        const btn = document.getElementById('btnAction');
+        const toggle = document.getElementById('toggle');
 
-        toggleLink.onclick = () => {
+        toggle.onclick = () => {
             isLogin = !isLogin;
-            formTitle.innerText = isLogin ? "تسجيل الدخول" : "إنشاء حساب جديد";
-            mainBtn.innerText = isLogin ? "دخول المدينة" : "تسجيل الحساب";
-            toggleLink.innerHTML = isLogin ? "ليس لديك حساب؟ <span>إنشاء حساب</span>" : "لديك حساب بالفعل؟ <span>دخول</span>";
+            document.getElementById('fTitle').innerText = isLogin ? "تسجيل الدخول" : "إنشاء حساب جديد";
+            btn.innerText = isLogin ? "دخول المدينة" : "تسجيل الحساب";
+            toggle.innerHTML = isLogin ? "ليس لديك حساب؟ <span>إنشاء حساب</span>" : "لديك حساب؟ <span>دخول</span>";
         };
 
-        mainBtn.onclick = async () => {
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value.trim();
-            if(!user || !pass) return alert("أكمل البيانات!");
+        btn.onclick = async () => {
+            const u = document.getElementById('user').value.trim();
+            const p = document.getElementById('pass').value.trim();
+            if(!u || !p) return alert("أكمل البيانات");
 
-            const userRef = ref(db, 'users/' + user);
-
-            if (isLogin) {
-                const snap = await get(userRef);
-                if (snap.exists() && snap.val().pass === pass) {
-                    localStorage.setItem('paris_session', JSON.stringify(snap.val()));
+            const uRef = ref(db, 'users/' + u);
+            if(isLogin) {
+                const s = await get(uRef);
+                if(s.exists() && s.val().pass === p) {
+                    localStorage.setItem('paris_session', JSON.stringify(s.val()));
                     window.location.href = "index.html";
-                } else {
-                    alert("خطأ في الاسم أو كلمة المرور");
-                }
+                } else alert("بيانات خاطئة");
             } else {
-                const snap = await get(userRef);
-                if (snap.exists()) return alert("الاسم مأخوذ مسبقاً!");
-                
-                const userData = { user, pass, rank: "USER" };
-                await set(userRef, userData);
-                alert("تم التسجيل بنجاح! يمكنك الدخول الآن.");
+                const s = await get(uRef);
+                if(s.exists()) return alert("الاسم مستخدم");
+                await set(uRef, { user: u, pass: p, rank: "USER" });
+                alert("تم التسجيل! سجل دخولك الآن");
                 location.reload();
             }
         };
