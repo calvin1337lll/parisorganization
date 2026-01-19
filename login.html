@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دخول النظام - منظمة باريس</title>
+    <title>دخول - منظمة باريس</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { background: #0d1b3e; font-family: 'Cairo', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 380px; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 380px; }
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; text-align: center; font-size: 16px; outline: none; background: #f8faff; }
         button { width: 100%; padding: 12px; background: #0d1b3e; color: #f1d279; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 18px; margin-top: 10px; }
-        .signup-link { margin-top: 20px; font-size: 14px; }
-        .signup-link a { color: #3498db; text-decoration: none; font-weight: bold; }
+        .links { margin-top: 20px; font-size: 14px; }
+        .links a { color: #3498db; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="login-card">
+    <div class="card">
         <div style="font-size: 50px;">👑</div>
         <h2>دخول النظام</h2>
         <input type="text" id="username" placeholder="اسم المستخدم">
         <input type="password" id="password" placeholder="كلمة السر">
         <button id="loginBtn" onclick="handleLogin()">دخول</button>
-        <div class="signup-link">ليس لديك حساب؟ <a href="signup.html">إنشاء حساب جديد</a></div>
+        <div class="links">ليس لديك حساب؟ <a href="signup.html">إنشاء حساب جديد</a></div>
     </div>
 
     <script type="module">
@@ -48,25 +48,21 @@
 
             try {
                 const dbRef = ref(db);
-                // البحث بالاسم الصغير لضمان التوافق
                 const snapshot = await get(child(dbRef, `users/${userInp.toLowerCase()}`));
 
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     if (data.password.toString() === passInp) {
+                        // حفظ في localStorage ليراه النظام بالكامل
                         localStorage.setItem('paris_session', JSON.stringify({
-                            user: data.username || userInp, // نأخذ الاسم الأصلي بالأحرف الكبيرة
+                            user: data.username || userInp,
                             rank: data.rank || 'MEMBER'
                         }));
                         window.location.replace('index.html');
                     } else { alert("كلمة السر خاطئة"); }
                 } else { alert("اسم المستخدم غير موجود"); }
-            } catch (e) { 
-                console.error(e);
-                alert("خطأ في الاتصال: تأكد من الإنترنت أو إعدادات قاعدة البيانات"); 
-            }
-            btn.innerText = "دخول";
-            btn.disabled = false;
+            } catch (e) { alert("خطأ في الاتصال بقاعدة البيانات"); }
+            btn.innerText = "دخول"; btn.disabled = false;
         };
     </script>
 </body>
