@@ -32,7 +32,7 @@
         .salary-text { color: var(--green); }
         .fine-text { color: var(--red); }
 
-        /* نموذج الإضافة (للمالك) */
+        /* نموذج الإضافة (للمسؤولين) */
         .admin-box { background: white; padding: 20px; border-radius: 15px; margin-bottom: 25px; border: 2px solid var(--dark); }
         .input-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         input { padding: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
@@ -40,7 +40,11 @@
         .btn-salary { background: var(--green); }
         .btn-fine { background: var(--red); }
 
-        @media (max-width: 768px) { .bank-sidebar { display: none; } .input-row { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { 
+            .bank-sidebar { display: none; } 
+            .input-row { grid-template-columns: 1fr; } 
+            .main-container { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
@@ -51,7 +55,7 @@
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
         </div>
         <h2 id="pageTitle">قائمة الرواتب</h2>
-        <div id="uNameDisplay" style="color: var(--gold); font-weight: bold;">البنك</div>
+        <div id="uNameDisplay" style="color: var(--gold); font-weight: bold;">تحميل...</div>
     </header>
 
     <div class="main-container">
@@ -66,7 +70,7 @@
                 <div class="input-row">
                     <input type="text" id="targetUser" placeholder="اسم المستخدم">
                     <input type="number" id="amount" placeholder="المبلغ ($)">
-                    <input type="text" id="reason" placeholder="السبب (مثلاً: رتبة عميد)">
+                    <input type="text" id="reason" placeholder="السبب">
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button class="action-btn btn-salary" onclick="processBank('salaries')">إضافة راتب +</button>
@@ -90,12 +94,20 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const userData = JSON.parse(sessionStorage.getItem('paris_session'));
+
+        // استخدام localStorage لضمان التوافق مع الأندرويد
+        const userData = JSON.parse(localStorage.getItem('paris_session'));
         let currentTab = 'salaries';
 
-        if (!userData) window.location.href = 'login.html';
-        document.getElementById('uNameDisplay').innerText = userData.user;
-        if (userData.rank === 'OWNER') document.getElementById('adminPanel').style.display = 'block';
+        if (!userData) {
+            window.location.replace('login.html');
+        } else {
+            document.getElementById('uNameDisplay').innerText = userData.user;
+            // إظهار لوحة التحكم للمالك والمسؤولين
+            if (userData.rank === 'OWNER' || userData.rank === 'ADMIN') {
+                document.getElementById('adminPanel').style.display = 'block';
+            }
+        }
 
         window.setTab = (tab, btn) => {
             currentTab = tab;
@@ -106,16 +118,17 @@
         };
 
         window.processBank = async (type) => {
-            const user = document.getElementById('targetUser').value.trim().toLowerCase();
+            const userRaw = document.getElementById('targetUser').value.trim();
             const val = document.getElementById('amount').value;
             const res = document.getElementById('reason').value;
 
-            if (!user || !val) return alert("يرجى ملء الحقول المطلوبة");
+            if (!userRaw || !val) return alert("يرجى ملء الحقول المطلوبة");
 
             const bankRef = ref(db, `bank/${type}`);
             const newEntryRef = push(bankRef);
+            
             await set(newEntryRef, {
-                target: user,
+                target: userRaw, // حفظ الاسم كما أدخل (يدعم أحرف كبيرة)
                 amount: val,
                 reason: res,
                 date: new Date().toLocaleString('ar-EG'),
@@ -141,11 +154,11 @@
                                 <div>
                                     <div style="font-weight:bold; font-size:16px;">${item.target}</div>
                                     <div style="font-size:12px; color:#888;">السبب: ${item.reason || 'غير محدد'}</div>
-                                    <div style="font-size:11px; color:#aaa;">التاريخ: ${item.date}</div>
+                                    <div style="font-size:11px; color:#aaa;">بواسطة: ${item.admin || 'النظام'} | ${item.date}</div>
                                 </div>
                                 <div class="amount ${isSalary ? 'salary-text' : 'fine-text'}">
                                     ${isSalary ? '+' : '-'} ${item.amount} $
-                                    ${userData.rank === 'OWNER' ? `<i class="fas fa-trash-alt" style="margin-right:15px; cursor:pointer; color:#ccc;" onclick="deleteEntry('${id}')"></i>` : ''}
+                                    ${(userData.rank === 'OWNER' || userData.rank === 'ADMIN') ? `<i class="fas fa-trash-alt" style="margin-right:15px; cursor:pointer; color:#ccc;" onclick="deleteEntry('${id}')"></i>` : ''}
                                 </div>
                             </div>`;
                     });
@@ -157,9 +170,12 @@
         }
 
         window.deleteEntry = (id) => {
-            if (confirm("حذف هذه المعاملة؟")) remove(ref(db, `bank/${currentTab}/${id}`));
+            if (confirm("هل أنت متأكد من حذف هذه المعاملة؟")) {
+                remove(ref(db, `bank/${currentTab}/${id}`));
+            }
         };
 
+        // تحميل البيانات عند بدء التشغيل
         loadBankData();
     </script>
 </body>
