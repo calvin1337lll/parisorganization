@@ -3,157 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة إدارة باريس - Admin Panel</title>
+    <title>إدارة باريس</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --dark: #0d1b3e; --gold: #f1d279; --blue: #3498db; --red: #e74c3c; --white: #ffffff; }
+        :root { --dark: #0d1b3e; --gold: #f1d279; --white: #ffffff; }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-        body { background: #f0f2f5; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background: #f0f2f5; transition: 0.3s; }
+        
+        body.dark-mode { background: #121212; color: white; }
+        .dark-mode .control-box, .dark-mode .staff-item { background: #1e1e1e; border-color: #333; color: white; }
+        .dark-mode input { background: #333; color: white; border-color: #444; }
 
         .admin-header { background: var(--dark); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--gold); }
-        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-
-        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; width: 100%; }
-
-        /* صندوق التحكم */
-        .control-box { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 30px; border-top: 5px solid var(--blue); }
-        .control-box h3 { margin-bottom: 20px; color: var(--dark); display: flex; align-items: center; gap: 10px; }
-        
-        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #ddd; outline: none; font-size: 15px; }
-        
-        .btn-promote { background: var(--dark); color: var(--gold); border: none; padding: 0 25px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-promote:hover { background: #162a5a; }
-
-        /* قائمة الطاقم */
-        .staff-list { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .staff-item { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
-        .staff-item:last-child { border-bottom: none; }
-        .staff-item:hover { background: #fcfcfc; }
-
-        .staff-info { display: flex; align-items: center; gap: 15px; }
-        .staff-avatar { width: 45px; height: 45px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--dark); font-size: 20px; }
-        
-        .staff-name { font-weight: bold; color: var(--dark); font-size: 16px; }
-        .staff-rank { font-size: 12px; color: #888; display: block; }
-        .rank-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .badge-owner { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .badge-admin { background: #cfe2ff; color: #084298; border: 1px solid #b6d4fe; }
-
-        .btn-demote { background: none; border: 1px solid var(--red); color: var(--red); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: 0.3s; }
-        .btn-demote:hover { background: var(--red); color: white; }
-
-        @media (max-width: 600px) { .input-group { flex-direction: column; } .btn-promote { padding: 12px; } }
+        .back-btn { text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 8px; font-size: 14px; background: transparent; cursor: pointer; }
+        .container { max-width: 700px; margin: 30px auto; padding: 20px; }
+        .control-box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .input-group { display: flex; gap: 10px; margin-top: 15px; }
+        input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
+        .staff-item { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
+        .btn-demote { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <header class="admin-header">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <i class="fas fa-user-shield" style="color:var(--gold); font-size: 24px;"></i>
+        <div style="display:flex; gap:10px;">
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
+            <button onclick="toggleDarkMode()" class="back-btn"><i class="fas fa-moon"></i></button>
         </div>
-        <h2>إدارة طاقم باريس</h2>
-        <div id="uNameDisplay" style="color: var(--gold); font-weight: bold;">تحميل...</div>
+        <h2>إدارة الطاقم</h2>
+        <div id="uNameDisplay" style="color:var(--gold);">تحميل...</div>
     </header>
 
     <div class="container">
         <div class="control-box">
-            <h3><i class="fas fa-user-plus"></i> تعيين مسؤول جديد</h3>
+            <h3><i class="fas fa-user-plus"></i> تعيين مسؤول (ADMIN)</h3>
             <div class="input-group">
-                <input type="text" id="targetUser" placeholder="أدخل اسم المستخدم (Username)">
-                <button class="btn-promote" onclick="promoteAdmin()">رفع لرتبة آدمن</button>
+                <input type="text" id="targetUser" placeholder="اسم المستخدم">
+                <button onclick="promoteAdmin()" style="background:var(--dark); color:var(--gold); border:none; padding:10px 20px; border-radius:8px; cursor:pointer;">رفع</button>
             </div>
-            <p style="font-size: 12px; color: #666;"><i class="fas fa-info-circle"></i> الآدمن لديه صلاحية النشر والحذف في كافة أقسام الموقع.</p>
         </div>
-
-        <h3 style="margin-bottom: 15px; color: var(--dark); font-size: 18px;">طاقم الإدارة الحالي:</h3>
-        <div class="staff-list" id="staffContainer">
-            </div>
+        <div id="staffList"></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4",
-            databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com",
-            projectId: "webparis-ef921",
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const userData = JSON.parse(localStorage.getItem('paris_session'));
 
-        // التحقق من الصلاحيات للدخول
-        if (!userData || (userData.rank !== 'OWNER' && userData.rank !== 'ADMIN')) {
-            window.location.replace('index.html');
-        } else {
-            document.getElementById('uNameDisplay').innerText = userData.user;
-        }
+        if (!userData || userData.rank !== 'OWNER') window.location.href = 'index.html';
+        document.getElementById('uNameDisplay').innerText = userData.user;
 
-        // دالة رفع مستخدم لآدمن
+        window.toggleDarkMode = () => {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('paris_theme', isDark ? 'dark' : 'light');
+        };
+        if (localStorage.getItem('paris_theme') === 'dark') document.body.classList.add('dark-mode');
+
         window.promoteAdmin = async () => {
-            const username = document.getElementById('targetUser').value.trim();
-            if (!username) return alert("أدخل اسم المستخدم أولاً");
-
-            if (userData.rank !== 'OWNER') return alert("عذراً، صاحب الموقع فقط من يمكنه تعيين الإدارة");
-
-            const userRef = ref(db, `users/${username}`);
-            const snapshot = await get(userRef);
-
-            if (snapshot.exists()) {
+            const name = document.getElementById('targetUser').value.trim();
+            if(!name) return;
+            const userRef = ref(db, `users/${name}`);
+            const snap = await get(userRef);
+            if(snap.exists()){
                 await update(userRef, { rank: 'ADMIN' });
-                alert(`تم رفع ${username} لرتبة ADMIN بنجاح`);
-                document.getElementById('targetUser').value = "";
-            } else {
-                alert("هذا المستخدم غير موجود في قاعدة البيانات");
-            }
+                alert("تم التعيين");
+            } else alert("المستخدم غير موجود");
         };
 
-        // دالة إزالة مستخدم من الإدارة
-        window.demoteUser = async (username) => {
-            if (userData.rank !== 'OWNER') return alert("لا تملك صلاحية التعديل على الطاقم");
-            
-            if (confirm(`هل أنت متأكد من إزالة ${username} من طاقم الإدارة؟`)) {
-                await update(ref(db, `users/${username}`), { rank: 'USER' });
-                alert("تمت الإزالة بنجاح");
-            }
-        };
-
-        // عرض قائمة الطاقم
-        function loadStaff() {
-            onValue(ref(db, 'users'), (snap) => {
-                const users = snap.val();
-                let html = "";
-                if (users) {
-                    Object.keys(users).forEach(uname => {
-                        const u = users[uname];
-                        if (u.rank === 'OWNER' || u.rank === 'ADMIN') {
-                            html += `
-                                <div class="staff-item">
-                                    <div class="staff-info">
-                                        <div class="staff-avatar"><i class="fas fa-user-shield"></i></div>
-                                        <div>
-                                            <span class="staff-name">${uname}</span>
-                                            <span class="rank-badge ${u.rank === 'OWNER' ? 'badge-owner' : 'badge-admin'}">
-                                                ${u.rank}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    ${(userData.rank === 'OWNER' && u.rank !== 'OWNER') ? 
-                                    `<button class="btn-demote" onclick="demoteUser('${uname}')">إزالة من الإدارة</button>` : ''}
-                                </div>`;
-                        }
-                    });
+        onValue(ref(db, 'users'), (snap) => {
+            const users = snap.val();
+            let html = "";
+            for(let name in users) {
+                if(users[name].rank === 'ADMIN'){
+                    html += `<div class="staff-item">
+                        <span>${name} <small style="color:var(--gold)">[ADMIN]</small></span>
+                        <button class="btn-demote" onclick="demote('${name}')">إزالة</button>
+                    </div>`;
                 }
-                document.getElementById('staffContainer').innerHTML = html;
-            });
-        }
+            }
+            document.getElementById('staffList').innerHTML = html;
+        });
 
-        loadStaff();
+        window.demote = async (name) => {
+            if(confirm("إزالة من الإدارة؟")){
+                await update(ref(db, `users/${name}`), { rank: 'USER' });
+            }
+        };
     </script>
 </body>
 </html>
