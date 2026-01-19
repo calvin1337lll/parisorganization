@@ -2,55 +2,117 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>متجر باريس المركزي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر باريس المركزي | PARIS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #f1d279; --dark: #000; }
+        :root { --gold: #f1d279; --dark: #000; --card-bg: #0a0a0a; }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--dark); color: white; padding: 20px; }
-        .header { text-align: center; padding: 40px; border-bottom: 2px solid var(--gold); margin-bottom: 40px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; max-width: 1200px; margin: auto; }
         
-        /* كرت المنتج بتأثير الزوايا */
-        .card { 
-            background: #111; border-radius: 15px; overflow: hidden; border: 1px solid #222;
-            position: relative; transition: 0.4s; padding-bottom: 15px;
-        }
-        .card::before, .card::after {
-            content: ''; position: absolute; width: 30px; height: 30px; border: 2px solid var(--gold); transition: 0.5s; opacity: 0.2;
-        }
-        .card::before { top: 0; right: 0; border-bottom: none; border-left: none; }
-        .card::after { bottom: 0; left: 0; border-top: none; border-right: none; }
-        .card:hover { transform: translateY(-10px); border-color: var(--gold); }
-        .card:hover::before, .card:hover::after { width: 100%; height: 100%; opacity: 0.1; }
+        body { background-color: var(--dark); color: white; min-height: 100vh; padding-bottom: 50px; }
 
-        .card img { width: 100%; height: 200px; object-fit: cover; }
-        .info { padding: 15px; text-align: center; }
-        .title { color: var(--gold); font-size: 20px; font-weight: bold; margin-bottom: 10px; }
-        .price { background: var(--gold); color: black; padding: 5px 15px; border-radius: 5px; font-weight: bold; display: inline-block; }
+        /* زر العودة الاحترافي */
+        .back-nav {
+            position: fixed; top: 20px; right: 20px; text-decoration: none;
+            color: var(--gold); display: flex; align-items: center; gap: 8px;
+            font-weight: bold; padding: 8px 18px; border: 1px solid var(--gold);
+            border-radius: 50px; transition: 0.3s; background: rgba(5, 10, 26, 0.9);
+            z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .back-nav:hover { background: var(--gold); color: black; box-shadow: 0 0 20px var(--gold); }
+
+        .header { text-align: center; padding: 60px 20px; border-bottom: 2px solid var(--gold); margin-bottom: 40px; background: #050a1a; }
+        .header i { font-size: 50px; color: var(--gold); margin-bottom: 15px; }
+        .header h1 { font-size: 32px; color: var(--gold); }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* شبكة المنتجات */
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        /* كرت المنتج */
+        .product-card {
+            background: var(--card-bg); border: 1px solid #1a1a1a; border-radius: 20px;
+            overflow: hidden; position: relative; transition: 0.4s;
+            display: flex; flex-direction: column;
+        }
+        .product-card:hover { transform: translateY(-10px); border-color: var(--gold); }
+
+        /* تأثير الزوايا الذهبية */
+        .product-card::before, .product-card::after {
+            content: ''; position: absolute; width: 30px; height: 30px; border: 2px solid var(--gold); opacity: 0; transition: 0.4s; z-index: 2;
+        }
+        .product-card::before { top: 15px; left: 15px; border-bottom: 0; border-right: 0; }
+        .product-card::after { bottom: 15px; right: 15px; border-top: 0; border-left: 0; }
+        .product-card:hover::before, .product-card:hover::after { opacity: 0.6; }
+
+        .product-img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid #222; transition: 0.5s; }
+        .product-card:hover .product-img { transform: scale(1.05); }
+
+        .product-info { padding: 20px; flex: 1; text-align: center; }
+        .product-title { font-size: 20px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
+        .product-desc { color: #aaa; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+        
+        .buy-btn {
+            display: block; width: 100%; padding: 12px; background: var(--gold);
+            color: black; text-decoration: none; font-weight: bold; border-radius: 10px;
+            transition: 0.3s;
+        }
+        .buy-btn:hover { background: #fff; transform: scale(1.02); }
+
+        .no-data { text-align: center; grid-column: 1/-1; padding: 50px; color: #444; font-size: 18px; }
     </style>
 </head>
 <body>
-    <div class="header"><h1>🛒 متجر المدينة</h1></div>
-    <div class="grid" id="market-list"></div>
+
+    <a href="index.html" class="back-nav">
+        <i class="fas fa-arrow-right"></i>
+        <span>العودة للمدينة</span>
+    </a>
+
+    <header class="header">
+        <i class="fas fa-shopping-bag"></i>
+        <h1>متجر باريس المركزي</h1>
+        <p style="color: #666; margin-top: 10px;">أفضل المنتجات والخدمات الحصرية لمواطنينا</p>
+    </header>
+
+    <div class="container">
+        <div class="market-grid" id="market-list">
+            <div class="no-data">جاري تحديث قائمة المنتجات...</div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        const db = getDatabase(initializeApp({apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com"}));
 
-        onValue(ref(db, 'market'), (snap) => {
+        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        onValue(ref(db, 'market'), (snapshot) => {
             const list = document.getElementById('market-list');
             list.innerHTML = "";
-            snap.forEach(c => {
-                const d = c.val();
+            
+            if(!snapshot.exists()) {
+                list.innerHTML = "<div class='no-data'>لا توجد منتجات متوفرة حالياً.</div>";
+                return;
+            }
+
+            snapshot.forEach(child => {
+                const data = child.val();
                 list.innerHTML += `
-                    <div class="card">
-                        ${d.image ? `<img src="${d.image}">` : '<div style="height:200px; background:#1a1a1a;"></div>'}
-                        <div class="info">
-                            <div class="title">${d.title}</div>
-                            <p style="color:#888; margin-bottom:15px;">${d.body}</p>
-                            <div class="price">عرض السعر</div>
+                    <div class="product-card">
+                        <img src="${data.image || 'https://via.placeholder.com/400x220?text=Paris+Market'}" class="product-img">
+                        <div class="product-info">
+                            <div class="product-title">${data.title}</div>
+                            <p class="product-desc">${data.body}</p>
+                            <a href="#" class="buy-btn"><i class="fas fa-cart-plus"></i> شراء المنتج</a>
                         </div>
                     </div>`;
             });
