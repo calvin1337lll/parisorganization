@@ -3,83 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>باريس - الخريطة المركزية</title>
+    <title>باريس - الخريطة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #f1d279; --gold-glow: rgba(241, 210, 121, 0.6); --admin-red: #ff4757; }
+        :root { --gold: #f1d279; --glow: rgba(241, 210, 121, 0.4); }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-        
         body { background-color: #000; color: white; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
-        /* دائرة المسار المنقطة */
-        .orbit { position: absolute; width: 450px; height: 450px; border: 1.5px dashed rgba(241, 210, 121, 0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        /* دائرة المسار المنقطة خلف الأيقونات */
+        .map-bg-circle { position: absolute; width: 460px; height: 460px; border: 1.5px dashed rgba(241, 210, 121, 0.15); border-radius: 50%; pointer-events: none; }
 
-        /* الحاوية الرئيسية */
         .map-wrapper { position: relative; width: 500px; height: 500px; display: flex; justify-content: center; align-items: center; }
 
-        /* الأقسام */
-        .nav-item { position: absolute; text-decoration: none; color: white; display: flex; flex-direction: column; align-items: center; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
-        
-        .icon-circle { width: 65px; height: 65px; background: #000; border: 2px solid var(--gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: var(--gold); box-shadow: 0 0 15px var(--gold-glow); margin-bottom: 8px; }
-        
+        /* الأقسام الدائرية */
+        .nav-item { position: absolute; text-decoration: none; color: white; display: flex; flex-direction: column; align-items: center; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .icon-box { width: 70px; height: 70px; background: #000; border: 2px solid var(--gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 26px; color: var(--gold); box-shadow: 0 0 15px var(--glow); margin-bottom: 8px; }
         .nav-item span { font-size: 14px; font-weight: bold; text-shadow: 0 0 10px #000; }
 
-        /* المركز (البنك) */
-        .center-bank { z-index: 10; transform: scale(1.2); }
-        .center-bank .icon-circle { width: 100px; height: 100px; font-size: 45px; background: var(--gold); color: #000; box-shadow: 0 0 30px var(--gold); }
-        .center-bank span { color: var(--gold); font-size: 18px; margin-top: 5px; }
+        /* البنك في المركز */
+        .center-node .icon-box { width: 110px; height: 110px; font-size: 45px; background: var(--gold); color: #000; box-shadow: 0 0 35px var(--gold); }
+        .center-node span { color: var(--gold); font-size: 18px; }
 
-        /* توزيع العناصر بدقة زاوية (مثل الصورة 2) */
-        .pos-news   { transform: translate(0, -225px); }    /* الساعة 12 */
-        .pos-market { transform: translate(225px, 0); }     /* الساعة 3 */
-        .pos-prison { transform: translate(0, 225px); }     /* الساعة 6 */
-        .pos-court  { transform: translate(-225px, 0); }    /* الساعة 9 */
-        .pos-admin  { transform: translate(160px, -160px); } /* زاوية الإدارة */
-        
-        .pos-admin .icon-circle { border-color: var(--admin-red); color: var(--admin-red); box-shadow: 0 0 15px rgba(255, 71, 87, 0.4); }
+        /* التوزيع الدائري (مثل الصورة) */
+        .pos-news   { transform: translate(0, -230px); }    /* أعلى */
+        .pos-market { transform: translate(230px, 0); }     /* يمين */
+        .pos-prison { transform: translate(0, 230px); }     /* أسفل */
+        .pos-court  { transform: translate(-230px, 0); }    /* يسار */
+        .pos-admin  { transform: translate(165px, -165px); } /* زاوية */
 
-        .nav-item:hover { transform: scale(1.15) !important; }
+        .pos-admin .icon-box { border-color: #ff4757; color: #ff4757; box-shadow: 0 0 15px rgba(255, 71, 87, 0.3); }
 
-        /* الإشعارات */
-        #global-notice { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #111; color: var(--gold); padding: 15px 30px; border-radius: 50px; border: 2px solid var(--gold); z-index: 1000; transition: 0.5s; box-shadow: 0 0 20px var(--gold-glow); }
-        #global-notice.show { top: 30px; }
+        .nav-item:hover { transform: scale(1.1); }
+
+        /* إشعار الموقع */
+        #global-notice { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #111; color: var(--gold); padding: 15px 35px; border-radius: 50px; border: 2px solid var(--gold); z-index: 1000; transition: 0.6s; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        #global-notice.active { top: 30px; }
     </style>
 </head>
 <body>
 
-    <div id="global-notice"><i class="fas fa-bell"></i> &nbsp; <span id="notice-msg"></span></div>
+    <div id="global-notice"><i class="fas fa-bell"></i> &nbsp; <span id="msg"></span></div>
 
     <div class="map-wrapper">
-        <div class="orbit"></div>
+        <div class="map-bg-circle"></div>
 
-        <a href="bank.html" class="nav-item center-bank">
-            <div class="icon-circle"><i class="fas fa-university"></i></div>
+        <a href="bank.html" class="nav-item center-node">
+            <div class="icon-box"><i class="fas fa-university"></i></div>
             <span>البنك</span>
         </a>
 
         <a href="news.html" class="nav-item pos-news">
-            <div class="icon-circle"><i class="fas fa-newspaper"></i></div>
+            <div class="icon-box"><i class="fas fa-newspaper"></i></div>
             <span>الأخبار</span>
         </a>
-
         <a href="market.html" class="nav-item pos-market">
-            <div class="icon-circle"><i class="fas fa-shopping-cart"></i></div>
+            <div class="icon-box"><i class="fas fa-shopping-cart"></i></div>
             <span>المتجر</span>
         </a>
-
         <a href="prison.html" class="nav-item pos-prison">
-            <div class="icon-circle"><i class="fas fa-lock"></i></div>
+            <div class="icon-box"><i class="fas fa-lock"></i></div>
             <span>السجن</span>
         </a>
-
         <a href="court.html" class="nav-item pos-court">
-            <div class="icon-circle"><i class="fas fa-gavel"></i></div>
+            <div class="icon-box"><i class="fas fa-gavel"></i></div>
             <span>المحكمة</span>
         </a>
-
-        <a href="admin.html" id="adminBtn" class="nav-item pos-admin" style="display:none;">
-            <div class="icon-circle"><i class="fas fa-user-shield"></i></div>
+        <a href="admin.html" id="adminLink" class="nav-item pos-admin" style="display:none;">
+            <div class="icon-box"><i class="fas fa-user-shield"></i></div>
             <span>الإدارة</span>
         </a>
     </div>
@@ -91,19 +82,26 @@
         const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        
         const userData = JSON.parse(localStorage.getItem('paris_session'));
-
-        // إظهار زر الإدارة فقط للمسؤولين
         if(userData && (userData.rank === 'OWNER' || userData.rank === 'ADMIN')) {
-            document.getElementById('adminBtn').style.display = 'flex';
+            document.getElementById('adminLink').style.display = 'flex';
         }
 
-        // استقبال الإشعارات
+        // إشعارات المتصفح
+        if (Notification.permission !== 'granted') Notification.requestPermission();
+
         onChildAdded(ref(db, 'notifications'), (snap) => {
+            const data = snap.val();
             const notice = document.getElementById('global-notice');
-            document.getElementById('notice-msg').innerText = snap.val().message;
-            notice.classList.add('show');
-            setTimeout(() => notice.classList.remove('show'), 6000);
+            document.getElementById('msg').innerText = data.message;
+            notice.classList.add('active');
+            
+            if (Notification.permission === 'granted') {
+                new Notification("باريس: تنبيه جديد 🔔", { body: data.message });
+            }
+            new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3').play();
+            setTimeout(() => notice.classList.remove('active'), 6000);
         });
     </script>
 </body>
