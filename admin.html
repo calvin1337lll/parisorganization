@@ -2,158 +2,206 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مركز التحكم المطور | PARIS</title>
+    <title>التحكم الشامل | PARIS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --gold: #f1d279; --red: #ff4757; --dark: #000; --bg-card: #0a0a0a; }
+        :root { --gold: #f1d279; --red: #ff4757; --green: #2ecc71; --dark: #000; }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background: var(--dark); color: white; padding: 20px; }
         
-        .container { max-width: 900px; margin: auto; }
+        .container { max-width: 950px; margin: auto; }
         .admin-box { 
-            background: var(--bg-card); padding: 25px; border-radius: 15px; 
-            border: 1px solid #1a1a1a; margin-bottom: 30px; position: relative;
+            background: #0a0a0a; padding: 25px; border-radius: 15px; 
+            border: 1px solid #1a1a1a; margin-bottom: 25px; position: relative;
             border-top: 3px solid var(--gold);
         }
 
-        h2 { color: var(--gold); margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+        h2 { color: var(--gold); margin-bottom: 20px; font-size: 18px; display: flex; align-items: center; gap: 10px; }
         input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: white; border-radius: 8px; }
-        button { width: 100%; padding: 12px; background: var(--gold); color: black; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        button:hover { filter: brightness(1.2); }
-
-        /* ستايل الجداول والقوائم */
-        .list-item { background: #000; padding: 15px; border-radius: 10px; border: 1px solid #222; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-del { width: auto; background: var(--red); color: white; padding: 5px 15px; font-size: 13px; }
         
-        /* سجل الإدارة */
-        .log-item { font-size: 13px; padding: 8px; border-bottom: 1px solid #1a1a1a; color: #aaa; }
-        .log-user { color: var(--gold); font-weight: bold; }
-        .log-action { color: #fff; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-gold { background: var(--gold); color: black; width: 100%; }
+        .btn-edit { background: var(--green); color: white; padding: 5px 10px; font-size: 12px; }
+        .btn-del { background: var(--red); color: white; padding: 5px 10px; font-size: 12px; }
 
-        #ownerSection { display: none; border-top-color: var(--red); }
+        /* سجل العمليات */
+        .log-container { background: #050505; border: 1px solid #111; height: 180px; overflow-y: auto; padding: 10px; border-radius: 8px; font-size: 13px; }
+        .log-entry { padding: 6px; border-bottom: 1px solid #111; display: flex; gap: 10px; }
+        .log-time { color: #555; }
+        .log-user { color: var(--gold); }
+
+        /* إدارة المنشورات */
+        .post-item { background: #000; padding: 12px; border: 1px solid #222; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        
+        #ownerZone { display: none; border-top-color: var(--red); }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 style="text-align: center; margin-bottom: 30px; color: var(--gold);">نظام إدارة مدينة باريس</h1>
+    <h1 style="text-align: center; color: var(--gold); margin-bottom: 30px;">لوحة التحكم العليا</h1>
 
-    <div class="admin-box">
-        <h2><i class="fas fa-plus-circle"></i> إضافة منشور جديد</h2>
-        <select id="targetSec">
-            <option value="news">الصحيفة</option>
-            <option value="market">المتجر</option>
-            <option value="bank">البنك</option>
-            <option value="prison">السجن</option>
-            <option value="court">المحكمة</option>
-        </select>
-        <input type="text" id="pTitle" placeholder="العنوان">
-        <textarea id="pBody" placeholder="التفاصيل..." rows="3"></textarea>
-        <button onclick="handlePublish()">نشر وتوثيق</button>
-    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="admin-box" id="editorBox">
+            <h2 id="formTitle"><i class="fas fa-plus-circle"></i> نشر محتوى جديد</h2>
+            <input type="hidden" id="editId">
+            <select id="targetSec">
+                <option value="news">الصحيفة</option>
+                <option value="market">المتجر</option>
+                <option value="bank">البنك</option>
+                <option value="prison">السجن</option>
+                <option value="court">المحكمة</option>
+            </select>
+            <input type="text" id="pTitle" placeholder="العنوان">
+            <textarea id="pBody" placeholder="التفاصيل..." rows="4"></textarea>
+            <input type="text" id="pImg" placeholder="رابط الصورة">
+            <button class="btn btn-gold" id="actionBtn" onclick="handleAction()">نشر الآن</button>
+            <button class="btn hidden" id="cancelBtn" onclick="resetForm()" style="background:#333; color:white; margin-top:5px; width:100%;">إلغاء التعديل</button>
+        </div>
 
-    <div class="admin-box" style="border-top-color: #2ecc71;">
-        <h2><i class="fas fa-history"></i> سجل نشاط الإدارة</h2>
-        <div id="adminLogs" style="max-height: 200px; overflow-y: auto;">
-            <p style="text-align:center; color:#444;">جاري جلب السجلات...</p>
+        <div class="admin-box" style="border-top-color: var(--green);">
+            <h2><i class="fas fa-history"></i> سجل الإدارة (Logs)</h2>
+            <div class="log-container" id="logsDiv"></div>
         </div>
     </div>
 
     <div class="admin-box">
-        <h2><i class="fas fa-trash-alt"></i> إدارة المنشورات الحالية</h2>
-        <select id="viewSec" onchange="loadPosts()">
-            <option value="news">عرض منشورات الصحيفة</option>
-            <option value="market">عرض منشورات المتجر</option>
-            <option value="bank">عرض منشورات البنك</option>
-            <option value="prison">عرض منشورات السجن</option>
-            <option value="court">عرض منشورات المحكمة</option>
+        <h2><i class="fas fa-tasks"></i> التحكم بالمنشورات الحالية</h2>
+        <select id="filterSec" onchange="loadCurrentPosts()">
+            <option value="news">قسم الأخبار</option>
+            <option value="market">قسم المتجر</option>
+            <option value="bank">قسم البنك</option>
+            <option value="prison">قسم السجن</option>
+            <option value="court">قسم المحكمة</option>
         </select>
-        <div id="postsList" style="margin-top: 20px;"></div>
+        <div id="displayPosts" style="margin-top:15px;"></div>
     </div>
 
-    <div id="ownerSection" class="admin-box">
-        <h2><i class="fas fa-crown"></i> رتب الإدارة</h2>
-        <input type="text" id="targetUser" placeholder="اسم المستخدم">
-        <button onclick="changeRank('ADMIN')">رفع لرتبة آدمن</button>
+    <div id="ownerZone" class="admin-box">
+        <h2><i class="fas fa-crown"></i> إدارة الصلاحيات</h2>
+        <div style="display: flex; gap:10px;">
+            <input type="text" id="uSearch" placeholder="اسم المستخدم بدقة">
+            <button class="btn btn-gold" style="width:150px" onclick="updateRank('ADMIN')">ترقية</button>
+            <button class="btn" style="width:150px; background:var(--red); color:white" onclick="updateRank('USER')">تنزيل</button>
+        </div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const config = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com" };
     const app = initializeApp(config);
     const db = getDatabase(app);
 
-    // الحصول على بيانات المستخدم الحالي من الجلسة
-    const session = JSON.parse(localStorage.getItem('paris_session')) || { user: "مجهول", rank: "USER" };
-    if(session.rank === 'OWNER') document.getElementById('ownerSection').style.display = 'block';
+    const session = JSON.parse(localStorage.getItem('paris_session')) || { user: "زائر", rank: "USER" };
+    if(session.rank === 'OWNER') document.getElementById('ownerZone').style.display = 'block';
 
-    // وظيفة توثيق السجل
-    const writeLog = (action) => {
-        push(ref(db, 'admin_logs'), {
-            user: session.user,
-            action: action,
-            time: new Date().toLocaleString('ar-EG')
-        });
+    const logAction = (msg) => {
+        push(ref(db, 'admin_logs'), { user: session.user, action: msg, time: new Date().toLocaleString('ar-EG') });
     };
 
-    // 1. النشر
-    window.handlePublish = async () => {
+    // --- وظائف النشر والتعديل ---
+    window.handleAction = async () => {
+        const id = document.getElementById('editId').value;
         const sec = document.getElementById('targetSec').value;
-        const title = document.getElementById('pTitle').value;
-        if(!title) return alert("أدخل العنوان");
-
-        await push(ref(db, sec), {
-            title: title,
+        const data = {
+            title: document.getElementById('pTitle').value,
             body: document.getElementById('pBody').value,
+            image: document.getElementById('pImg').value,
             time: new Date().toLocaleString('ar-EG'),
             author: session.user
-        });
+        };
 
-        writeLog(`قام بنشر خبر جديد في قسم [${sec}] بعنوان: ${title}`);
-        alert("تم النشر وتوثيق العملية");
-        location.reload();
+        if(!data.title) return alert("أكمل البيانات");
+
+        if(id) { // تعديل
+            await update(ref(db, `${sec}/${id}`), data);
+            logAction(`عدّل المنشور [${data.title}] في قسم ${sec}`);
+            alert("تم التعديل");
+        } else { // نشر جديد
+            await push(ref(db, sec), data);
+            logAction(`نشر محتوى جديد [${data.title}] في قسم ${sec}`);
+            alert("تم النشر");
+        }
+        resetForm();
     };
 
-    // 2. جلب سجل النشاط
-    onValue(ref(db, 'admin_logs'), (snap) => {
-        const logDiv = document.getElementById('adminLogs');
-        logDiv.innerHTML = "";
-        let logs = [];
-        snap.forEach(c => { logs.push(c.val()); });
-        logs.reverse().forEach(l => {
-            logDiv.innerHTML += `<div class="log-item">
-                [${l.time}] <span class="log-user">${l.user}</span>: <span class="log-action">${l.action}</span>
-            </div>`;
-        });
-    });
+    window.resetForm = () => {
+        document.getElementById('editId').value = "";
+        document.getElementById('pTitle').value = "";
+        document.getElementById('pBody').value = "";
+        document.getElementById('pImg').value = "";
+        document.getElementById('actionBtn').innerText = "نشر الآن";
+        document.getElementById('formTitle').innerHTML = `<i class="fas fa-plus-circle"></i> نشر محتوى جديد`;
+        document.getElementById('cancelBtn').classList.add('hidden');
+    };
 
-    // 3. جلب المنشورات للحذف
-    window.loadPosts = () => {
-        const sec = document.getElementById('viewSec').value;
+    // --- جلب المحتوى والتحكم ---
+    window.loadCurrentPosts = () => {
+        const sec = document.getElementById('filterSec').value;
         onValue(ref(db, sec), (snap) => {
-            const list = document.getElementById('postsList');
-            list.innerHTML = "";
+            const container = document.getElementById('displayPosts');
+            container.innerHTML = "";
             snap.forEach(c => {
                 const p = c.val();
-                list.innerHTML += `<div class="list-item">
-                    <span>${p.title}</span>
-                    <button class="btn-del" onclick="handleDelete('${sec}', '${c.key}', '${p.title}')">حذف</button>
-                </div>`;
+                container.innerHTML += `
+                    <div class="post-item">
+                        <span>${p.title}</span>
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn btn-edit" onclick="prepareEdit('${sec}', '${c.key}')">تعديل</button>
+                            <button class="btn btn-del" onclick="deletePost('${sec}', '${c.key}', '${p.title}')">حذف</button>
+                        </div>
+                    </div>`;
             });
         });
     };
-    loadPosts(); // تحميل أولي
+    loadCurrentPosts();
 
-    // 4. الحذف
-    window.handleDelete = async (sec, id, title) => {
-        if(confirm(`هل تريد حذف: ${title}؟`)) {
+    window.prepareEdit = async (sec, id) => {
+        const snap = await get(ref(db, `${sec}/${id}`));
+        const d = snap.val();
+        document.getElementById('editId').value = id;
+        document.getElementById('targetSec').value = sec;
+        document.getElementById('pTitle').value = d.title;
+        document.getElementById('pBody').value = d.body;
+        document.getElementById('pImg').value = d.image || "";
+        document.getElementById('actionBtn').innerText = "تحديث المنشور";
+        document.getElementById('formTitle').innerHTML = `<i class="fas fa-edit"></i> وضع التعديل`;
+        document.getElementById('cancelBtn').classList.remove('hidden');
+        window.scrollTo(0,0);
+    };
+
+    window.deletePost = async (sec, id, title) => {
+        if(confirm("حذف نهائي؟")) {
             await remove(ref(db, `${sec}/${id}`));
-            writeLog(`قام بحذف منشور من قسم [${sec}] كان بعنوان: ${title}`);
-            alert("تم الحذف وتوثيق العملية");
+            logAction(`حذف المنشور [${title}] من قسم ${sec}`);
         }
+    };
+
+    // --- السجلات ---
+    onValue(ref(db, 'admin_logs'), (snap) => {
+        const div = document.getElementById('logsDiv');
+        div.innerHTML = "";
+        let logs = []; snap.forEach(c => logs.push(c.val()));
+        logs.reverse().forEach(l => {
+            div.innerHTML += `<div class="log-entry"><span class="log-time">${l.time.split(' ')[1]}</span> <span class="log-user">${l.user}</span> <span>${l.action}</span></div>`;
+        });
+    });
+
+    // --- رتب المالك ---
+    window.updateRank = async (rank) => {
+        const name = document.getElementById('uSearch').value;
+        const snap = await get(ref(db, 'users'));
+        let uid = null;
+        snap.forEach(u => { if(u.val().user === name) uid = u.key; });
+        if(uid) {
+            await update(ref(db, `users/${uid}`), { rank: rank });
+            logAction(`غير رتبة ${name} إلى ${rank}`);
+            alert("تم التغيير");
+        } else alert("لم يتم العثور على الاسم");
     };
 
 </script>
