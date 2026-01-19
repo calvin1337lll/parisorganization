@@ -1,6 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+// --- كود حماية الصفحة ---
+const session = JSON.parse(localStorage.getItem('paris_session'));
+if (!session) {
+    window.location.href = "login.html"; // إذا لم يسجل دخول، يطرد للصفحة الرئيسية
+}
+// -----------------------
 // إعدادات Firebase الخاصة بك
 const firebaseConfig = {
     apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4",
@@ -154,3 +160,4 @@ function logout() {
     sessionStorage.clear();
     window.location.href = 'login.html';
 }
+
