@@ -3,100 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدينة باريس - الرئيسية</title>
+    <title>باريس - النظام المطور</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #f1d279; --dark-blue: #050a1a; --card-bg: #111; }
+        :root { --gold: #f1d279; --dark: #000; --nav-bg: #050a1a; }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
         
-        body { background-color: #000; color: white; min-height: 100vh; }
+        body { background-color: var(--dark); color: white; min-height: 100vh; padding-top: 80px; }
 
-        /* الهيدر العلوي */
-        .top-bar { 
-            background: var(--dark-blue); padding: 15px 30px; 
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--gold);
+        /* الشريط العلوي الاحترافي */
+        .navbar { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+            background: var(--nav-bg); display: flex; justify-content: space-between;
+            align-items: center; padding: 0 30px; border-bottom: 2px solid var(--gold);
+            z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
-        /* حاوية البطاقات */
-        .container { 
-            max-width: 1200px; margin: 50px auto; 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 25px; padding: 0 20px;
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-left { display: flex; align-items: center; gap: 15px; }
+
+        .nav-link { 
+            color: white; text-decoration: none; font-weight: bold; font-size: 14px;
+            padding: 8px 15px; border-radius: 5px; border: 1px solid transparent; transition: 0.3s;
+        }
+        .nav-link:hover { border-color: var(--gold); color: var(--gold); background: rgba(241, 210, 121, 0.1); }
+        
+        .logout-btn { color: #ff4757; border: 1px solid #ff4757; }
+        .logout-btn:hover { background: #ff4757; color: white; }
+
+        /* حاوية البطاقات (المربعات) */
+        .main-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; padding: 40px; max-width: 1200px; margin: 0 auto;
         }
 
-        /* ستايل البطاقة المستطيلة */
-        .nav-card {
-            background: var(--card-bg); padding: 30px; border-radius: 15px;
+        /* تصميم المربع الرهيب مع الخطوط */
+        .card {
+            background: #111; padding: 30px; border-radius: 15px;
             text-align: center; text-decoration: none; color: white;
-            border-bottom: 4px solid var(--gold); transition: 0.3s;
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            position: relative; overflow: hidden; transition: 0.5s;
+            border: 1px solid #222;
         }
 
-        .nav-card i { font-size: 40px; color: var(--gold); }
-        .nav-card span { font-size: 20px; font-weight: bold; }
-
-        .nav-card:hover { 
-            transform: translateY(-10px); 
-            background: #1a1a1a; 
-            box-shadow: 0 10px 20px rgba(241, 210, 121, 0.2); 
+        /* الخطوط اللي بالزاوية */
+        .card::before {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 40px; height: 40px; border-top: 3px solid var(--gold);
+            border-right: 3px solid var(--gold); transition: 0.5s;
+        }
+        .card::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 40px; height: 40px; border-bottom: 3px solid var(--gold);
+            border-left: 3px solid var(--gold); transition: 0.5s;
         }
 
-        /* زر الإدارة بلون مختلف */
-        .admin-card { border-color: #ff4757; }
-        .admin-card i { color: #ff4757; }
+        .card i { font-size: 35px; color: var(--gold); margin-bottom: 15px; display: block; }
+        .card span { font-size: 18px; font-weight: bold; }
 
-        /* إشعار منبثق */
+        /* تأثير الغموض عند الضغط واللمس */
+        .card:hover { background: #1a1a1a; transform: translateY(-5px); box-shadow: 0 0 20px rgba(241, 210, 121, 0.2); }
+        .card:hover::before, .card:hover::after { width: 100%; height: 100%; }
+
+        /* إشعار الموقع */
         #global-notice { 
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
-            background: var(--dark-blue); color: var(--gold); padding: 15px 30px; 
-            border-radius: 50px; border: 2px solid var(--gold); z-index: 1000; 
-            transition: 0.5s; box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--nav-bg); color: var(--gold); padding: 12px 25px;
+            border-radius: 50px; border: 2px solid var(--gold); z-index: 2000; transition: 0.5s;
         }
-        #global-notice.active { top: 30px; }
-
-        /* زر الوضع الليلي */
-        .theme-btn { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+        #global-notice.active { top: 90px; }
     </style>
 </head>
 <body>
 
     <div id="global-notice"><i class="fas fa-bell"></i> &nbsp; <span id="msg"></span></div>
 
-    <header class="top-bar">
-        <h2>موقع باريس</h2>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <button class="theme-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
-            <span id="uName">تحميل...</span>
+    <nav class="navbar">
+        <div class="nav-right">
+            <h2 style="color: var(--gold); font-size: 20px;">باريس</h2>
         </div>
-    </header>
+        
+        <div class="nav-left">
+            <span id="uName" style="color: #888; font-size: 14px; margin-left: 10px;">..</span>
+            <a href="admin.html" id="adminLink" class="nav-link" style="display:none;"><i class="fas fa-user-shield"></i> الإدارة</a>
+            <a href="#" onclick="logout()" class="nav-link logout-btn"><i class="fas fa-sign-out-alt"></i> خروج</a>
+        </div>
+    </nav>
 
-    <main class="container">
-        <a href="news.html" class="nav-card">
-            <i class="fas fa-newspaper"></i>
-            <span>الأخبار</span>
-        </a>
-        <a href="market.html" class="nav-card">
-            <i class="fas fa-shopping-cart"></i>
-            <span>المتجر</span>
-        </a>
-        <a href="bank.html" class="nav-card">
-            <i class="fas fa-university"></i>
-            <span>البنك</span>
-        </a>
-        <a href="prison.html" class="nav-card">
-            <i class="fas fa-lock"></i>
-            <span>السجن</span>
-        </a>
-        <a href="court.html" class="nav-card">
-            <i class="fas fa-gavel"></i>
-            <span>المحكمة</span>
-        </a>
-        <a href="admin.html" id="adminBtn" class="nav-card admin-card" style="display:none;">
-            <i class="fas fa-user-shield"></i>
-            <span>الإدارة</span>
-        </a>
+    <main class="main-container">
+        <a href="news.html" class="card"><i class="fas fa-newspaper"></i><span>الأخبار</span></a>
+        <a href="market.html" class="card"><i class="fas fa-shopping-cart"></i><span>المتجر</span></a>
+        <a href="bank.html" class="card"><i class="fas fa-university"></i><span>البنك</span></a>
+        <a href="prison.html" class="card"><i class="fas fa-lock"></i><span>السجن</span></a>
+        <a href="court.html" class="card"><i class="fas fa-gavel"></i><span>المحكمة</span></a>
     </main>
 
     <script type="module">
@@ -111,20 +110,21 @@
         if(userData) {
             document.getElementById('uName').innerText = userData.user;
             if(userData.rank === 'OWNER' || userData.rank === 'ADMIN') {
-                document.getElementById('adminBtn').style.display = 'flex';
+                document.getElementById('adminLink').style.display = 'inline-block';
             }
         }
 
-        // استقبال الإشعارات
+        window.logout = () => {
+            localStorage.removeItem('paris_session');
+            window.location.href = 'login.html';
+        };
+
         onChildAdded(ref(db, 'notifications'), (snap) => {
             const notice = document.getElementById('global-notice');
             document.getElementById('msg').innerText = snap.val().message;
             notice.classList.add('active');
-            if (Notification.permission === 'granted') new Notification("باريس تنبيه 🔔", { body: snap.val().message });
             setTimeout(() => notice.classList.remove('active'), 6000);
         });
-
-        if (Notification.permission !== 'granted') Notification.requestPermission();
     </script>
 </body>
 </html>
