@@ -3,159 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مدينة باريس | PARIS CITY</title>
-    
+    <title>مدينة باريس | PARIS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-
     <style>
-        :root {
-            --gold: #f1d279;
-            --dark-blue: #050a1a;
-            --black: #000000;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        body {
-            background-color: var(--black);
-            color: white;
+        :root { --gold: #f1d279; --dark: #000; --nav-bg: #050a1a; }
+        
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+        
+        body { 
+            background: var(--dark); 
+            color: white; 
             overflow-x: hidden;
-            line-height: 1.6;
         }
 
-        /* شريط التنقل (Navbar) - متوافق مع الموبايل */
-        .navbar {
-            background: var(--dark-blue);
+        /* الهيدر العلوي */
+        .navbar { 
+            background: var(--nav-bg); 
+            padding: 15px; 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 15px; 
             border-bottom: 2px solid var(--gold);
-            padding: 10px 5px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap; /* يجعل الأزرار تنزل سطر جديد في الجوالات الصغيرة */
-            gap: 10px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: sticky; top: 0; z-index: 1000;
         }
+        .nav-link { color: #fff; text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        .nav-link:hover { color: var(--gold); }
 
-        .nav-link {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 13px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .nav-link i { color: var(--gold); }
-        .nav-link:hover { background: var(--glass); color: var(--gold); }
-
-        #adminBtn {
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            display: none; /* مخفي افتراضياً */
-        }
-
-        /* الحاوية الرئيسية */
-        .hero {
-            padding: 60px 20px;
-            text-align: center;
-            background: radial-gradient(circle, #0a1329 0%, #000 100%);
-            min-height: 80vh;
+        /* التصميم الغامض الرئيسي */
+        .main-wrapper {
+            min-height: 90vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: radial-gradient(circle, #0a1329 0%, #000 100%);
         }
 
-        .logo-icon {
-            font-size: 80px;
+        /* أيقونة البنك الكبيرة في المنتصف كما طلبت */
+        .central-bank-icon {
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: 0.5s;
+        }
+        .central-bank-icon i {
+            font-size: 100px;
             color: var(--gold);
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 15px rgba(241, 210, 121, 0.4));
+            filter: drop-shadow(0 0 20px rgba(241, 210, 121, 0.5));
+        }
+        .central-bank-icon:hover { transform: scale(1.1); }
+
+        h1 { font-size: 30px; letter-spacing: 3px; margin-bottom: 10px; color: #fff; text-transform: uppercase; }
+        .user-welcome { color: var(--gold); font-size: 18px; margin-bottom: 40px; }
+
+        /* شبكة الأيقونات الغامضة */
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 500px;
+            width: 100%;
         }
 
-        h1 {
-            font-size: 35px;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        .menu-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #1a1a1a;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            transition: 0.4s;
+            position: relative;
+        }
+        .menu-item i { font-size: 25px; margin-bottom: 10px; display: block; color: var(--gold); }
+        .menu-item span { font-size: 12px; font-weight: bold; }
+
+        /* تأثير الزوايا الذهبية عند اللمس */
+        .menu-item:hover { background: #050a1a; border-color: var(--gold); transform: translateY(-5px); }
+        
+        #adminBtn { 
+            display: none; grid-column: span 3; border: 1px solid var(--gold); background: rgba(241, 210, 121, 0.05);
+            margin-top: 10px;
         }
 
-        .welcome-msg {
-            color: #888;
-            font-size: 18px;
-            max-width: 600px;
+        /* الجوال */
+        @media (max-width: 500px) {
+            .grid-menu { grid-template-columns: repeat(2, 1fr); }
+            #adminBtn { grid-column: span 2; }
+            .central-bank-icon i { font-size: 80px; }
         }
-
-        /* تنسيقات خاصة للموبايل */
-        @media (max-width: 600px) {
-            h1 { font-size: 26px; }
-            .welcome-msg { font-size: 15px; }
-            .navbar { gap: 5px; padding: 15px 5px; }
-            .nav-link { font-size: 11px; padding: 6px 8px; }
-            .logo-icon { font-size: 60px; }
-        }
-
-        /* زر الخروج */
-        .logout-btn { color: #ff4757 !important; }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="index.html" class="nav-link"><i class="fas fa-home"></i> الرئيسية</a>
-        <a href="news.html" class="nav-link"><i class="fas fa-newspaper"></i> الأخبار</a>
-        <a href="market.html" class="nav-link"><i class="fas fa-shopping-cart"></i> المتجر</a>
-        <a href="bank.html" class="nav-link"><i class="fas fa-university"></i> البنك</a>
-        <a href="prison.html" class="nav-link"><i class="fas fa-user-lock"></i> السجن</a>
-        <a href="court.html" class="nav-link"><i class="fas fa-gavel"></i> المحكمة</a>
-        
-        <a href="admin.html" id="adminBtn" class="nav-link"><i class="fas fa-user-shield"></i> الإدارة</a>
-        
-        <a href="#" onclick="handleLogout()" class="nav-link logout-btn"><i class="fas fa-sign-out-alt"></i> خروج</a>
+        <a href="index.html" class="nav-link">الرئيسية</a>
+        <a href="news.html" class="nav-link">الصحيفة</a>
+        <a href="market.html" class="nav-link">المتجر</a>
+        <a href="#" onclick="logout()" class="nav-link" style="color: #ff4757;">تسجيل الخروج</a>
     </nav>
 
-    <div class="hero">
-        <div class="logo-icon"><i class="fas fa-city"></i></div>
-        <h1 id="welcomeUser">مرحباً بك في باريس</h1>
-        <p class="welcome-msg">المنصة الرسمية لإدارة شؤون المواطنين والخدمات الحكومية في المدينة.</p>
+    <div class="main-wrapper">
+        <a href="bank.html" class="central-bank-icon">
+            <i class="fas fa-university"></i>
+        </a>
+        
+        <h1 id="cityName">PARIS CITY</h1>
+        <div class="user-welcome" id="userTag">مرحباً بك</div>
+
+        <div class="grid-menu">
+            <a href="news.html" class="menu-item">
+                <i class="fas fa-newspaper"></i>
+                <span>الصحيفة</span>
+            </a>
+            <a href="market.html" class="menu-item">
+                <i class="fas fa-shopping-bag"></i>
+                <span>المتجر</span>
+            </a>
+            <a href="court.html" class="menu-item">
+                <i class="fas fa-gavel"></i>
+                <span>المحكمة</span>
+            </a>
+            <a href="prison.html" class="menu-item">
+                <i class="fas fa-user-lock"></i>
+                <span>السجن</span>
+            </a>
+            <a href="admin.html" id="adminBtn" class="menu-item">
+                <i class="fas fa-user-shield"></i>
+                <span>لوحة التحكم الإدارية</span>
+            </a>
+        </div>
     </div>
 
     <script type="module">
-        // 1. القفل الأمني: التحقق من وجود جلسة دخول
+        // التحقق من الحماية
         const session = JSON.parse(localStorage.getItem('paris_session'));
-
         if (!session) {
-            // إذا لم يتم العثور على بيانات مستخدم، يتم التوجيه فوراً لصفحة تسجيل الدخول
-            window.location.href = "login.html";
+            window.location.href = "login.html"; 
         } else {
-            // إذا كان مسجلاً، نرحب به باسمه
-            document.getElementById('welcomeUser').innerText = "مرحباً، " + session.user;
-
-            // 2. التحقق من الرتبة لإظهار زر الإدارة
-            if (session.rank === 'ADMIN' || session.rank === 'OWNER') {
-                document.getElementById('adminBtn').style.display = 'flex';
+            document.getElementById('userTag').innerText = "المواطن: " + session.user;
+            
+            // إظهار الإدارة للأونر والآدمن
+            if (session.rank === 'OWNER' || session.rank === 'ADMIN') {
+                document.getElementById('adminBtn').style.display = 'block';
             }
         }
 
-        // 3. وظيفة تسجيل الخروج
-        window.handleLogout = () => {
-            if(confirm("هل تريد تسجيل الخروج والعودة لصفحة الدخول؟")) {
-                localStorage.clear(); // مسح كافة البيانات
-                window.location.href = "login.html";
-            }
+        window.logout = () => {
+            localStorage.clear();
+            window.location.href = "login.html";
         };
     </script>
 </body>
