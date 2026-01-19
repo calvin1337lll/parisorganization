@@ -3,75 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>باريس - النظام المطور</title>
+    <title>باريس - النظام المركزي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #f1d279; --dark: #000; --nav-bg: #050a1a; }
         * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
         
-        body { background-color: var(--dark); color: white; min-height: 100vh; padding-top: 80px; }
+        body { 
+            background-color: var(--dark); 
+            color: white; 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+        }
 
-        /* الشريط العلوي الاحترافي */
+        /* شريط علوي احترافي (فوق كلش) */
         .navbar { 
             position: fixed; top: 0; left: 0; width: 100%; height: 70px;
             background: var(--nav-bg); display: flex; justify-content: space-between;
-            align-items: center; padding: 0 30px; border-bottom: 2px solid var(--gold);
-            z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            align-items: center; padding: 0 40px; border-bottom: 2px solid var(--gold);
+            z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-        .nav-left { display: flex; align-items: center; gap: 15px; }
-
+        .nav-left { display: flex; align-items: center; gap: 20px; }
         .nav-link { 
-            color: white; text-decoration: none; font-weight: bold; font-size: 14px;
-            padding: 8px 15px; border-radius: 5px; border: 1px solid transparent; transition: 0.3s;
+            color: white; text-decoration: none; font-weight: bold; font-size: 13px;
+            padding: 7px 15px; border-radius: 6px; border: 1px solid var(--gold); 
+            transition: 0.3s;
         }
-        .nav-link:hover { border-color: var(--gold); color: var(--gold); background: rgba(241, 210, 121, 0.1); }
-        
-        .logout-btn { color: #ff4757; border: 1px solid #ff4757; }
+        .nav-link:hover { background: var(--gold); color: black; }
+        .logout-btn { border-color: #ff4757; color: #ff4757; }
         .logout-btn:hover { background: #ff4757; color: white; }
 
-        /* حاوية البطاقات (المربعات) */
-        .main-container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px; padding: 40px; max-width: 1200px; margin: 0 auto;
+        /* حاوية الخريطة (البنك في المنتصف) */
+        .map-wrapper { 
+            flex: 1; position: relative; 
+            display: flex; justify-content: center; align-items: center;
+            margin-top: 70px;
         }
 
-        /* تصميم المربع الرهيب مع الخطوط */
-        .card {
-            background: #111; padding: 30px; border-radius: 15px;
-            text-align: center; text-decoration: none; color: white;
-            position: relative; overflow: hidden; transition: 0.5s;
-            border: 1px solid #222;
+        /* ستايل المربعات الرهيب */
+        .nav-item { 
+            position: absolute; text-decoration: none; color: white; 
+            display: flex; flex-direction: column; align-items: center; 
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* الخطوط اللي بالزاوية */
-        .card::before {
-            content: ''; position: absolute; top: 0; right: 0;
-            width: 40px; height: 40px; border-top: 3px solid var(--gold);
-            border-right: 3px solid var(--gold); transition: 0.5s;
-        }
-        .card::after {
-            content: ''; position: absolute; bottom: 0; left: 0;
-            width: 40px; height: 40px; border-bottom: 3px solid var(--gold);
-            border-left: 3px solid var(--gold); transition: 0.5s;
+        .square-box {
+            background: #111; width: 110px; height: 110px; border-radius: 15px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 1px solid #222; position: relative; transition: 0.5s;
         }
 
-        .card i { font-size: 35px; color: var(--gold); margin-bottom: 15px; display: block; }
-        .card span { font-size: 18px; font-weight: bold; }
+        /* خطوط الزوايا التي تكتمل عند اللمس */
+        .square-box::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 25px; height: 25px;
+            border-top: 3px solid var(--gold); border-right: 3px solid var(--gold); transition: 0.4s;
+        }
+        .square-box::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 25px; height: 25px;
+            border-bottom: 3px solid var(--gold); border-left: 3px solid var(--gold); transition: 0.4s;
+        }
 
-        /* تأثير الغموض عند الضغط واللمس */
-        .card:hover { background: #1a1a1a; transform: translateY(-5px); box-shadow: 0 0 20px rgba(241, 210, 121, 0.2); }
-        .card:hover::before, .card:hover::after { width: 100%; height: 100%; }
+        .nav-item i { font-size: 32px; color: var(--gold); }
+        .nav-item span { font-size: 14px; font-weight: bold; margin-top: 10px; text-shadow: 0 2px 5px #000; }
 
-        /* إشعار الموقع */
+        /* تأثير الغموض */
+        .nav-item:hover .square-box { background: #000; transform: scale(1.1); box-shadow: 0 0 25px rgba(241, 210, 121, 0.2); }
+        .nav-item:hover .square-box::before, .nav-item:hover .square-box::after { width: 100%; height: 100%; opacity: 0.7; }
+
+        /* تمييز البنك في المركز */
+        .center-bank .square-box { 
+            width: 150px; height: 150px; background: var(--gold); border: none; 
+            box-shadow: 0 0 40px rgba(241, 210, 121, 0.4);
+        }
+        .center-bank i { color: black; font-size: 50px; }
+        .center-bank span { color: var(--gold); font-size: 20px; }
+
+        /* توزيع المربعات حول المركز (بدون دوائر) */
+        .pos-news   { transform: translate(0, -230px); }
+        .pos-market { transform: translate(250px, 0); }
+        .pos-prison { transform: translate(0, 230px); }
+        .pos-court  { transform: translate(-250px, 0); }
+
+        /* الإشعار المنبثق */
         #global-notice { 
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: var(--nav-bg); color: var(--gold); padding: 12px 25px;
+            background: var(--nav-bg); color: var(--gold); padding: 12px 30px;
             border-radius: 50px; border: 2px solid var(--gold); z-index: 2000; transition: 0.5s;
         }
-        #global-notice.active { top: 90px; }
+        #global-notice.active { top: 85px; }
     </style>
 </head>
 <body>
@@ -79,30 +102,47 @@
     <div id="global-notice"><i class="fas fa-bell"></i> &nbsp; <span id="msg"></span></div>
 
     <nav class="navbar">
-        <div class="nav-right">
-            <h2 style="color: var(--gold); font-size: 20px;">باريس</h2>
-        </div>
-        
+        <h2 style="color: var(--gold); font-size: 22px;">PARIS</h2>
         <div class="nav-left">
-            <span id="uName" style="color: #888; font-size: 14px; margin-left: 10px;">..</span>
+            <span id="uName" style="color: #666; font-size: 14px;">..</span>
             <a href="admin.html" id="adminLink" class="nav-link" style="display:none;"><i class="fas fa-user-shield"></i> الإدارة</a>
-            <a href="#" onclick="logout()" class="nav-link logout-btn"><i class="fas fa-sign-out-alt"></i> خروج</a>
+            <a href="#" onclick="logout()" class="nav-link logout-btn">خروج</a>
         </div>
     </nav>
 
-    <main class="main-container">
-        <a href="news.html" class="card"><i class="fas fa-newspaper"></i><span>الأخبار</span></a>
-        <a href="market.html" class="card"><i class="fas fa-shopping-cart"></i><span>المتجر</span></a>
-        <a href="bank.html" class="card"><i class="fas fa-university"></i><span>البنك</span></a>
-        <a href="prison.html" class="card"><i class="fas fa-lock"></i><span>السجن</span></a>
-        <a href="court.html" class="card"><i class="fas fa-gavel"></i><span>المحكمة</span></a>
-    </main>
+    <div class="map-wrapper">
+        <a href="bank.html" class="nav-item center-bank">
+            <div class="square-box"><i class="fas fa-university"></i></div>
+            <span>البنك المركزي</span>
+        </a>
+
+        <a href="news.html" class="nav-item pos-news">
+            <div class="square-box"><i class="fas fa-newspaper"></i></div>
+            <span>الأخبار</span>
+        </a>
+        <a href="market.html" class="nav-item pos-market">
+            <div class="square-box"><i class="fas fa-shopping-cart"></i></div>
+            <span>المتجر</span>
+        </a>
+        <a href="prison.html" class="nav-item pos-prison">
+            <div class="square-box"><i class="fas fa-lock"></i></div>
+            <span>السجن</span>
+        </a>
+        <a href="court.html" class="nav-item pos-court">
+            <div class="square-box"><i class="fas fa-gavel"></i></div>
+            <span>المحكمة</span>
+        </a>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", 
+            databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", 
+            projectId: "webparis-ef921" 
+        };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         
@@ -114,10 +154,7 @@
             }
         }
 
-        window.logout = () => {
-            localStorage.removeItem('paris_session');
-            window.location.href = 'login.html';
-        };
+        window.logout = () => { localStorage.removeItem('paris_session'); window.location.href = 'login.html'; };
 
         onChildAdded(ref(db, 'notifications'), (snap) => {
             const notice = document.getElementById('global-notice');
