@@ -2,90 +2,45 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سجن باريس المركزي</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>سجن باريس الفيدرالي</title>
     <style>
-        :root { --dark: #1a1a1a; --gold: #f1d279; --bg: #2c3e50; --card: #34495e; --text: #ecf0f1; }
-        body.dark-mode { --bg: #000000; --card: #1a1a1a; --text: #ffffff; }
-        
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
-        body { background: var(--bg); color: var(--text); margin: 0; }
-
-        #global-notice { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #c0392b; color: white; padding: 15px 25px; border-radius: 12px; border: 2px solid white; z-index: 10000; transition: 0.5s; min-width: 320px; text-align: center; }
-        #global-notice.show { top: 20px; }
-
-        .header { background: #000; padding: 20px; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #c0392b; }
-        .container { max-width: 800px; margin: 30px auto; padding: 0 15px; }
-
-        .prison-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .prisoner-card { background: var(--card); border-radius: 15px; padding: 20px; border-left: 8px solid #c0392b; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .prisoner-card i.bg-icon { position: absolute; right: -10px; bottom: -10px; font-size: 80px; opacity: 0.1; transform: rotate(-15deg); }
-        .status { background: #c0392b; color: white; padding: 2px 10px; border-radius: 5px; font-size: 12px; float: left; }
-        .prisoner-name { font-size: 22px; font-weight: bold; color: var(--gold); display: block; margin-bottom: 10px; }
-        .details { font-size: 14px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+        body { background: #000; color: white; font-family: 'Cairo', sans-serif; padding: 20px; }
+        .prison-card { 
+            background: #0a0a0a; border: 1px solid #ff4757; border-radius: 10px; padding: 20px; 
+            max-width: 600px; margin: 20px auto; position: relative; overflow: hidden;
+        }
+        .prison-card::before { content: 'PRISONER'; position: absolute; top: 10px; left: -30px; background: #ff4757; color: white; padding: 5px 40px; transform: rotate(-45deg); font-size: 10px; font-weight: bold; }
+        .prison-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #ff4757; margin-bottom: 15px; }
+        h2 { color: #ff4757; }
     </style>
 </head>
 <body>
-
-    <div id="global-notice"><i class="fas fa-exclamation-triangle"></i> <span id="notice-msg"></span></div>
-
-    <header class="header">
-        <a href="index.html" style="color:white; text-decoration:none;"><i class="fas fa-arrow-right"></i> الهروب للرئيسية</a>
-        <h2><i class="fas fa-bars"></i> منطقة السجن</h2>
-        <div></div>
-    </header>
-
-    <div class="container">
-        <h2 style="text-align: center; margin-bottom: 30px; color: #c0392b;"><i class="fas fa-user-lock"></i> قائمة المسجونين والمطلوبين</h2>
-        
-        <div class="prison-grid" id="prisonList">
-            </div>
-    </div>
+    <h1 style="text-align:center; color:#ff4757; margin-top:50px;"><i class="fas fa-lock"></i> قائمة السجناء والجرائم</h1>
+    <div id="prison-list"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        const db = getDatabase(initializeApp({apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com"}));
 
-        const firebaseConfig = { apiKey: "AIzaSyCQ-8xDBbTDugkwdJMT6BbnaW5aQxufbf4", databaseURL: "https://webparis-ef921-default-rtdb.firebaseio.com", projectId: "webparis-ef921" };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // تحميل قائمة المسجونين
-        onValue(ref(db, 'prison/prisoners'), (snap) => {
-            let html = "";
-            const data = snap.val();
-            if(data) {
-                Object.keys(data).forEach(id => {
-                    const p = data[id];
-                    html += `
-                    <div class="prisoner-card">
-                        <i class="fas fa-lock bg-icon"></i>
-                        <span class="status">قيد الحبس</span>
-                        <span class="prisoner-name">${p.name}</span>
-                        <div class="details"><i class="fas fa- gavel"></i> التهمة: ${p.reason}</div>
-                        <div class="details"><i class="fas fa-clock"></i> المدة: ${p.duration}</div>
-                        <div class="details"><i class="fas fa-user-shield"></i> السجان: ${p.officer}</div>
+        onValue(ref(db, 'prison'), (snap) => {
+            const list = document.getElementById('prison-list');
+            list.innerHTML = "";
+            snap.forEach(c => {
+                const d = c.val();
+                list.innerHTML += `
+                    <div class="prison-card">
+                        <div style="display:flex; align-items:center; gap:20px;">
+                            ${d.image ? `<img src="${d.image}" class="prison-img">` : ''}
+                            <div>
+                                <h2>${d.title}</h2>
+                                <p style="color:#ccc;">${d.body}</p>
+                                <small style="color:#555;">التاريخ: ${d.time}</small>
+                            </div>
+                        </div>
                     </div>`;
-                });
-            } else {
-                html = "<p style='text-align:center; grid-column: 1/-1;'>السجن فارغ حالياً.. المدينة آمنة.</p>";
-            }
-            document.getElementById('prisonList').innerHTML = html;
+            });
         });
-
-        // استقبال إشعارات النظام
-        onChildAdded(ref(db, 'notifications'), (snap) => {
-            const data = snap.val();
-            const notice = document.getElementById('global-notice');
-            document.getElementById('notice-msg').innerText = data.message;
-            notice.classList.add('show');
-            if (Notification.permission === 'granted') new Notification("تنبيه أمني من السجن 👮", { body: data.message });
-            setTimeout(() => notice.classList.remove('show'), 7000);
-        });
-
-        if (localStorage.getItem('paris_theme') === 'dark') document.body.classList.add('dark-mode');
     </script>
 </body>
 </html>
